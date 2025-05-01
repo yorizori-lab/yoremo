@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class CreateSampleService(
     private val sampleRepository: SampleRepository
 ) {
+
+    @Transactional
     fun create(request: CreateSample.Request): CreateSample.Response {
         val saved = sampleRepository.create(Sample(message = request.message))
         return CreateSample.Response(saved.id!!)
