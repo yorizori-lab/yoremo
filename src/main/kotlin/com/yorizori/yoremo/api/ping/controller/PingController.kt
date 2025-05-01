@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.ping
+package com.yorizori.yoremo.api.ping.controller
 
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
