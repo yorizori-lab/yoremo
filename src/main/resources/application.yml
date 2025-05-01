@@ -18,5 +18,5 @@ spring:
 
 adapter:
   http:
-    json-place-holder:
+    json-placeholder:
       base-url: https://jsonplaceholder.typicode.com

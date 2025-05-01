@@ -10,9 +10,10 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
+/** [jsonPlaceholder](https://jsonplaceholder.typicode.com) */
 @Component
-class JsonPlaceHolderClient(
-    @Value("\${adapter.http.json-place-holder.base-url}")
+class JsonPlaceholderClient(
+    @Value("\${adapter.http.json-placeholder.base-url}")
     private val baseUrl: String,
     private val httpClient: HttpClient,
     private val objectMapper: ObjectMapper
