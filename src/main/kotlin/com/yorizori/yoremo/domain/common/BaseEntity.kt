@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.adapter.postgresql.common
+package com.yorizori.yoremo.domain.common
 
 import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners

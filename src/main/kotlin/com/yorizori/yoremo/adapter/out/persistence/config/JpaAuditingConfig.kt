@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.adapter.postgresql.common
+package com.yorizori.yoremo.adapter.out.persistence.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
