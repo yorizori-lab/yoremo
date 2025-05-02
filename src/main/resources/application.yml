@@ -3,11 +3,14 @@ spring:
     name: yoremo
   profiles:
     include: secrets
-
   threads:
     virtual:
       enabled: true
-
+  datasource:
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    driver-class-name: ${spring.datasource.driver-class-name}
   jpa:
     open-in-view: false
     hibernate:
@@ -15,6 +18,10 @@ spring:
     show-sql: true
     properties:
       format_sql: true
+
+  ai:
+    openai:
+      api-key: ${spring.ai.openai.api-key}
 
 adapter:
   http:
