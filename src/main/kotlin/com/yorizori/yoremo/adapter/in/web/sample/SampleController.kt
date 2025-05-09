@@ -1,7 +1,7 @@
 package com.yorizori.yoremo.adapter.`in`.web.sample
 
-import com.yorizori.yoremo.application.message.sample.CreateSample
-import com.yorizori.yoremo.application.message.sample.GetSample
+import com.yorizori.yoremo.adapter.`in`.web.sample.message.CreateSample
+import com.yorizori.yoremo.adapter.`in`.web.sample.message.GetSample
 import com.yorizori.yoremo.domain.sample.service.CreateSampleService
 import com.yorizori.yoremo.domain.sample.service.GetSampleService
 import org.springframework.web.bind.annotation.GetMapping

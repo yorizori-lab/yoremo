@@ -1,6 +1,6 @@
 package com.yorizori.yoremo.domain.sample.service
 
-import com.yorizori.yoremo.application.message.sample.CreateSample
+import com.yorizori.yoremo.adapter.`in`.web.sample.message.CreateSample
 import com.yorizori.yoremo.domain.sample.entity.Sample
 import com.yorizori.yoremo.domain.sample.port.SampleRepository
 import org.springframework.stereotype.Service

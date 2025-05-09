@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.application.message.sample
+package com.yorizori.yoremo.adapter.`in`.web.sample.message
 
 abstract class CreateSample {
 

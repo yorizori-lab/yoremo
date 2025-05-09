@@ -1,6 +1,6 @@
 package com.yorizori.yoremo.domain.sample.service
 
-import com.yorizori.yoremo.application.message.sample.GetSample
+import com.yorizori.yoremo.adapter.`in`.web.sample.message.GetSample
 import com.yorizori.yoremo.domain.sample.port.SampleRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
