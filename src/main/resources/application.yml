@@ -20,8 +20,24 @@ spring:
       format_sql: true
 
   ai:
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1536
+        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+        schema-validation: true
+    chat:
+      client:
+        enabled: true
     openai:
       api-key: ${spring.ai.openai.api-key}
+      embedding:
+        options:
+          model: text-embedding-3-small
+      chat:
+        options:
+          model: gpt-4o
 
 adapter:
   http:
