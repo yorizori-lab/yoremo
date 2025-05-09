@@ -15,7 +15,7 @@ class InsertVectorStoreTest {
 
     @Test
     @Disabled
-    fun execute() {
+    fun insert() {
         val documents = listOf(
             Document(
                 "Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! " +
