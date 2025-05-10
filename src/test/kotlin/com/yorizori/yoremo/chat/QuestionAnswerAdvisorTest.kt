@@ -25,7 +25,7 @@ class QuestionAnswerAdvisorTest {
         val qaAdvisor = QuestionAnswerAdvisor.builder(vectorStore).build()
 
         val response = ChatClient.builder(chatModel).build()
-            .prompt(question)
+            .prompt()
             .advisors(qaAdvisor)
             .user(question)
             .call()
