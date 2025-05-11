@@ -6,6 +6,8 @@ spring:
   threads:
     virtual:
       enabled: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   datasource:
     url: ${spring.datasource.url}
     username: ${spring.datasource.username}
