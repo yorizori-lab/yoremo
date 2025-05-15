@@ -19,7 +19,7 @@ class InsertVectorStoreTest {
         val documents = listOf(
             Document(
                 "Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! " +
-                        "Spring AI rocks!! Spring AI rocks!!",
+                    "Spring AI rocks!! Spring AI rocks!!",
                 mapOf("meta1" to "meta1")
             ),
             Document("The World is Big and Salvation Lurks Around the Corner"),

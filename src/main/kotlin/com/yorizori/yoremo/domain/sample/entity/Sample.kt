@@ -13,5 +13,5 @@ class Sample(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    val message: String,
+    val message: String
 ) : BaseEntity()
