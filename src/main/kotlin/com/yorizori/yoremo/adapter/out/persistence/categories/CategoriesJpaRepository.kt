@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CategoriesJpaRepository : JpaRepository<Categories, Long>
+interface CategoriesJpaRepository : JpaRepository<Categories, Long> {
+    fun findAllByCategoryType(categoryType: String): List<Categories>
+}
