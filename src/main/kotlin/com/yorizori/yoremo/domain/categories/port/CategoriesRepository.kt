@@ -12,4 +12,8 @@ class CategoriesRepository(
     fun findById(id: Long): Categories? {
         return categoriesJpaRepository.findById(id).getOrNull()
     }
+
+    fun findAllByCategoryType(categoryType: String): List<Categories> {
+        return categoriesJpaRepository.findAllByCategoryType(categoryType)
+    }
 }
