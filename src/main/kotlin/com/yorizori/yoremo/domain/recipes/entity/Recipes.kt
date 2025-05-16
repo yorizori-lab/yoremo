@@ -2,26 +2,35 @@ package com.yorizori.yoremo.domain.recipes.entity
 
 import com.yorizori.yoremo.domain.categories.entity.Categories
 import com.yorizori.yoremo.domain.common.BaseEntity
+import com.yorizori.yoremo.domain.common.convert.JsonStringConverter
 import jakarta.persistence.*
+import org.hibernate.type.SqlTypes
+import org.hibernate.annotations.JdbcTypeCode
 
 @Entity
 @Table(name = "recipes")
 class Recipes(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val recipeId: Int? = null,
+    val recipeId: Long? = null,
 
     val title: String,
 
     val description: String? = null,
 
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = JsonStringConverter::class)
     val ingredients: String,
 
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = JsonStringConverter::class)
     val seasonings: String,
 
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = JsonStringConverter::class)
     val instructions: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,5 +60,6 @@ class Recipes(
     val imageUrl: String? = null,
 
     @Column(name = "tags", columnDefinition = "_text")
-    var tagsText: String? = null,
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    var tags: List<String>? = null
 ) : BaseEntity()

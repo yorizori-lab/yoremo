@@ -9,7 +9,11 @@ import kotlin.jvm.optionals.getOrNull
 class RecipesRepository(
     private val recipesJpaRepository: RecipesJpaRepository
 ) {
-    fun findById(id: Int): Recipes? {
+    fun findById(id: Long): Recipes? {
         return recipesJpaRepository.findById(id).getOrNull()
+    }
+
+    fun save(recipes: Recipes): Recipes {
+        return recipesJpaRepository.save(recipes)
     }
 }
