@@ -1,10 +1,9 @@
-package com.yorizori.yoremo.vectorstore
+package com.yorizori.yoremo.recipes
 
 import com.yorizori.yoremo.domain.recipes.service.RecipesEmbeddingService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-
 
 @SpringBootTest
 class RecipesEmbeddingTest {
