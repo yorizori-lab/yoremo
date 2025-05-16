@@ -1,8 +1,9 @@
 package com.yorizori.yoremo.recipes
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
-import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
+import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
+import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -29,24 +30,44 @@ class CreateRecipesServiceTest {
         val request = CreateRecipes.Request(
             title = "김치찌개 테스트",
             description = "매콤한 김치찌개 레시피",
-            ingredients = """
-                [
-                    {"name": "김치", "amount": 300, "unit": "g", "notes": "숙성된 김치 사용"},
-                    {"name": "돼지고기", "amount": 200, "unit": "g", "notes": "삼겹살"}
-                ]
-            """.trimIndent(),
-            seasonings = """
-                [
-                    {"name": "고추장", "amount": 1, "unit": "큰술"},
-                    {"name": "간장", "amount": 1, "unit": "큰술"}
-                ]
-            """.trimIndent(),
-            instructions = """
-                [
-                    {"step_number": 1, "description": "재료를 준비합니다.", "image_url": "step1.jpg"},
-                    {"step_number": 2, "description": "김치를 볶습니다.", "image_url": "step2.jpg"}
-                ]
-            """.trimIndent(),
+            ingredients = listOf(
+                Recipes.Ingredient(
+                    name = "김치",
+                    amount = 300,
+                    unit = "g",
+                    notes = "숙성된 김치 사용"
+                ),
+                Recipes.Ingredient(
+                    name = "돼지고기",
+                    amount = 200,
+                    unit = "g",
+                    notes = "삼겹살"
+                )
+            ),
+            seasonings = listOf(
+                Recipes.Seasoning(
+                    name = "고추장",
+                    amount = 1,
+                    unit = "큰술"
+                ),
+                Recipes.Seasoning(
+                    name = "간장",
+                    amount = 1,
+                    unit = "큰술"
+                )
+            ),
+            instructions = listOf(
+                Recipes.Instruction(
+                    stepNumber = 1,
+                    description = "재료를 준비합니다.",
+                    imageUrl = "step1.jpg"
+                ),
+                Recipes.Instruction(
+                    stepNumber = 2,
+                    description = "김치를 볶습니다.",
+                    imageUrl = "step2.jpg"
+                )
+            ),
             // 카테고리 ID는 실제 존재하는 ID로 변경해야 합니다
             categoryTypeId = 1, // 한식 (실제 DB에 존재하는 ID 사용)
             categorySituationId = 11, // 일상 (실제 DB에 존재하는 ID 사용)
@@ -84,9 +105,28 @@ class CreateRecipesServiceTest {
         val request = CreateRecipes.Request(
             title = "잘못된 카테고리 테스트",
             description = "존재하지 않는 카테고리 ID 테스트",
-            ingredients = """[{"name": "테스트", "amount": 100, "unit": "g"}]""",
-            seasonings = """[{"name": "소금", "amount": 1, "unit": "작은술"}]""",
-            instructions = """[{"step_number": 1, "description": "테스트"}]""",
+            ingredients = listOf(
+                Recipes.Ingredient(
+                    name = "테스트 재료",
+                    amount = 100,
+                    unit = "g",
+                    notes = null
+                )
+            ),
+            seasonings = listOf(
+                Recipes.Seasoning(
+                    name = "소금",
+                    amount = 1,
+                    unit = "작은술"
+                )
+            ),
+            instructions = listOf(
+                Recipes.Instruction(
+                    stepNumber = 1,
+                    description = "테스트 단계",
+                    imageUrl = null
+                )
+            ),
             categoryTypeId = 9999, // 존재하지 않는 카테고리 ID
             prepTime = 10,
             cookTime = 20,
@@ -110,9 +150,28 @@ class CreateRecipesServiceTest {
         val request = CreateRecipes.Request(
             title = "카테고리 없는 레시피",
             description = "카테고리 없이 생성하는 테스트",
-            ingredients = """[{"name": "테스트", "amount": 100, "unit": "g"}]""",
-            seasonings = """[{"name": "소금", "amount": 1, "unit": "작은술"}]""",
-            instructions = """[{"step_number": 1, "description": "테스트"}]""",
+            ingredients = listOf(
+                Recipes.Ingredient(
+                    name = "테스트 재료",
+                    amount = 100,
+                    unit = "g",
+                    notes = null
+                )
+            ),
+            seasonings = listOf(
+                Recipes.Seasoning(
+                    name = "소금",
+                    amount = 1,
+                    unit = "작은술"
+                )
+            ),
+            instructions = listOf(
+                Recipes.Instruction(
+                    stepNumber = 1,
+                    description = "테스트 단계",
+                    imageUrl = null
+                )
+            ),
             // 모든 카테고리 ID를 null로 설정
             categoryTypeId = null,
             categorySituationId = null,
