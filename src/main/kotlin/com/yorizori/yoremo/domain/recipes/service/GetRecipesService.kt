@@ -2,7 +2,6 @@ package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,12 +11,9 @@ import org.springframework.web.server.ResponseStatusException
 class GetRecipesService(
     private val recipesRepository: RecipesRepository
 ) {
-    private val logger = LoggerFactory.getLogger(GetRecipesService::class.java)
 
     @Transactional(readOnly = true)
     fun getRecipes(id: Long): GetRecipes.Response {
-        // 디버깅을 위해 로깅 추가
-        logger.info("Searching for recipe with ID: $id")
         val recipes = recipesRepository.findById(id)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,

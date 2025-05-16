@@ -35,7 +35,7 @@ class RecipesEmbeddingService(
             val recipesList = page.content
             totalProcessed += recipesList.size
 
-            logger.info("페이지 ${pageNumber}: ${recipesList.size}개 레시피 처리 중...")
+            logger.info("페이지 $pageNumber: ${recipesList.size}개 레시피 처리 중...")
 
             // 레시피를 문서로 변환
             val documents = recipesList.map { recipes ->
@@ -46,14 +46,14 @@ class RecipesEmbeddingService(
             val tokenizedDocuments = tokenTextSplitter.apply(documents)
             val documentsToAdd = tokenizedDocuments ?: emptyList()
 
-            logger.info("페이지 ${pageNumber}: ${documentsToAdd.size}개의 문서로 분할")
+            logger.info("페이지 $pageNumber: ${documentsToAdd.size}개의 문서로 분할")
 
             if (documentsToAdd.isNotEmpty()) {
                 // 벡터 스토어에 추가
                 vectorStore.add(documentsToAdd)
-                logger.info("페이지 ${pageNumber}: 벡터 스토어에 문서 추가 완료")
+                logger.info("페이지 $pageNumber: 벡터 스토어에 문서 추가 완료")
             } else {
-                logger.warn("페이지 ${pageNumber}: 분할된 문서가 없습니다")
+                logger.warn("페이지 $pageNumber: 분할된 문서가 없습니다")
             }
 
             // 다음 페이지로 이동
@@ -124,7 +124,7 @@ class RecipesEmbeddingService(
             recipes.instructions
                 .sortedBy { it.stepNumber }
                 .forEach { (number, description) ->
-                    sb.appendLine("  ${number}. $description")
+                    sb.appendLine("  $number. $description")
                 }
         } catch (e: Exception) {
             logger.warn("조리 단계 파싱 실패: ${recipes.instructions}", e)

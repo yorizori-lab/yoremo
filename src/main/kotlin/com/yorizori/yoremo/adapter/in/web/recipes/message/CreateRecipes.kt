@@ -16,7 +16,7 @@ class CreateRecipes {
         val prepTime: Int? = null,
         val cookTime: Int? = null,
         val servingSize: Int? = null,
-        val difficulty: String? = null,
+        val difficulty: Recipes.Difficulty? = null,
         val imageUrl: String? = null,
         val tags: List<String>? = null
     )

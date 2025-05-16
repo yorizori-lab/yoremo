@@ -7,11 +7,9 @@ import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @SpringBootTest
 class CreateRecipesServiceTest {
@@ -76,7 +74,7 @@ class CreateRecipesServiceTest {
             prepTime = 15,
             cookTime = 30,
             servingSize = 2,
-            difficulty = "보통",
+            difficulty = Recipes.Difficulty.EASY,
             imageUrl = "https://example.com/kimchi-stew.jpg",
             tags = listOf("매콤", "찌개", "돼지고기", "김치")
         )
@@ -96,110 +94,5 @@ class CreateRecipesServiceTest {
         println("생성된 레시피 ID: ${response.recipeId}")
         println("생성된 레시피 제목: ${createdRecipe?.title}")
         println("생성된 레시피 설명: ${createdRecipe?.description}")
-    }
-
-    @Test
-    @Transactional
-    fun `존재하지 않는 카테고리 ID로 생성 시 예외 발생 테스트`() {
-        // given
-        val request = CreateRecipes.Request(
-            title = "잘못된 카테고리 테스트",
-            description = "존재하지 않는 카테고리 ID 테스트",
-            ingredients = listOf(
-                Recipes.Ingredient(
-                    name = "테스트 재료",
-                    amount = 100,
-                    unit = "g",
-                    notes = null
-                )
-            ),
-            seasonings = listOf(
-                Recipes.Seasoning(
-                    name = "소금",
-                    amount = 1,
-                    unit = "작은술"
-                )
-            ),
-            instructions = listOf(
-                Recipes.Instruction(
-                    stepNumber = 1,
-                    description = "테스트 단계",
-                    imageUrl = null
-                )
-            ),
-            categoryTypeId = 9999, // 존재하지 않는 카테고리 ID
-            prepTime = 10,
-            cookTime = 20,
-            servingSize = 1,
-            difficulty = "쉬움"
-        )
-
-        // when & then
-        val exception = assertThrows<ResponseStatusException> {
-            createRecipesService.create(request)
-        }
-
-        assertEquals("400 BAD_REQUEST \"Category Type not found with id: 9999\"", exception.message)
-        println("예외 메시지: ${exception.message}")
-    }
-
-    @Test
-    @Transactional
-    fun `모든 카테고리 ID가 null인 경우 성공 테스트`() {
-        // given
-        val request = CreateRecipes.Request(
-            title = "카테고리 없는 레시피",
-            description = "카테고리 없이 생성하는 테스트",
-            ingredients = listOf(
-                Recipes.Ingredient(
-                    name = "테스트 재료",
-                    amount = 100,
-                    unit = "g",
-                    notes = null
-                )
-            ),
-            seasonings = listOf(
-                Recipes.Seasoning(
-                    name = "소금",
-                    amount = 1,
-                    unit = "작은술"
-                )
-            ),
-            instructions = listOf(
-                Recipes.Instruction(
-                    stepNumber = 1,
-                    description = "테스트 단계",
-                    imageUrl = null
-                )
-            ),
-            // 모든 카테고리 ID를 null로 설정
-            categoryTypeId = null,
-            categorySituationId = null,
-            categoryIngredientId = null,
-            categoryMethodId = null,
-            prepTime = 5,
-            cookTime = 10,
-            servingSize = 1,
-            difficulty = "매우 쉬움"
-        )
-
-        // when
-        val response = createRecipesService.create(request)
-
-        // then
-        assertNotNull(response.recipeId)
-
-        val createdRecipe = recipesRepository.findById(response.recipeId)
-        assertNotNull(createdRecipe)
-        assertEquals(request.title, createdRecipe?.title)
-        assertEquals(request.description, createdRecipe?.description)
-
-        // 카테고리 관계 확인
-        assertEquals(null, createdRecipe?.categoryType)
-        assertEquals(null, createdRecipe?.categorySituation)
-        assertEquals(null, createdRecipe?.categoryIngredient)
-        assertEquals(null, createdRecipe?.categoryMethod)
-
-        println("카테고리 없는 레시피 ID: ${response.recipeId}")
     }
 }

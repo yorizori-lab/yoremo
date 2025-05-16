@@ -16,24 +16,24 @@ class CreateRecipesService(
 ) {
     @Transactional
     fun create(request: CreateRecipes.Request): CreateRecipes.Response {
-        val categoryType = request.categoryTypeId?.let {
-            categoriesRepository.findById(it) ?: throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Category Type not found with id: $it"
-            )
-        }
-        val categorySituation = request.categorySituationId?.let {
-            categoriesRepository.findById(it) ?: throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Category Situation not found with id: $it"
-            )
-        }
-        val categoryIngredient = request.categoryIngredientId?.let {
-            categoriesRepository.findById(it) ?: throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Category Ingredient not found with id: $it"
-            )
-        }
-        val categoryMethod = request.categoryMethodId?.let {
-            categoriesRepository.findById(it) ?: throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Category Method not found with id: $it"
+        val categoryType = request.categoryTypeId
+            ?.let { categoriesRepository.findById(it) }
+        val categorySituation = request.categorySituationId
+            ?.let { categoriesRepository.findById(it) }
+        val categoryIngredient = request.categoryIngredientId
+            ?.let { categoriesRepository.findById(it) }
+        val categoryMethod = request.categoryMethodId
+            ?.let { categoriesRepository.findById(it) }
+
+        if (
+            categoryType == null ||
+            categoryMethod == null ||
+            categorySituation == null ||
+            categoryIngredient == null
+        ) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "invalid parameter. request: $request"
             )
         }
 
@@ -52,13 +52,13 @@ class CreateRecipesService(
             servingSize = request.servingSize,
             difficulty = request.difficulty,
             imageUrl = request.imageUrl,
-            tags = request.tags  // 직접 List<String>으로 전달
+            tags = request.tags // 직접 List<String>으로 전달
         )
 
         val savedRecipes = recipesRepository.save(recipes)
 
         return CreateRecipes.Response(
-            recipeId = savedRecipes.recipeId ?: throw IllegalStateException("생성된 레시피의 ID가 null입니다")
+            recipeId = savedRecipes.recipeId!!
         )
     }
 }

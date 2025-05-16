@@ -21,7 +21,7 @@ class GetRecipes {
         val prepTime: Int?,
         val cookTime: Int?,
         val servingSize: Int?,
-        val difficulty: String?,
+        val difficulty: Recipes.Difficulty?,
         val imageUrl: String?,
         val tags: List<String>?,
         val createdAt: Instant,

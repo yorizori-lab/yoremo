@@ -2,7 +2,17 @@ package com.yorizori.yoremo.domain.recipes.entity
 
 import com.yorizori.yoremo.domain.categories.entity.Categories
 import com.yorizori.yoremo.domain.common.BaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 
@@ -51,7 +61,8 @@ data class Recipes(
 
     val servingSize: Int? = null,
 
-    val difficulty: String? = null,
+    @Enumerated(EnumType.STRING)
+    val difficulty: Difficulty? = null,
 
     val imageUrl: String? = null,
 
@@ -78,4 +89,10 @@ data class Recipes(
         val description: String,
         val imageUrl: String?
     )
+
+    enum class Difficulty(val description: String) {
+        EASY("쉬움"),
+        NORMAL("보통"),
+        HARD("어려움")
+    }
 }
