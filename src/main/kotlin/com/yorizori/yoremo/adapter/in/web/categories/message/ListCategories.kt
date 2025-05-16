@@ -1,18 +1,20 @@
 package com.yorizori.yoremo.adapter.`in`.web.categories.message
 
-class ListCategories {
+import com.yorizori.yoremo.domain.categories.entity.Categories
+
+abstract class ListCategories {
     data class Request(
-        val categoryType: String
+        val categoryType: Categories.Type
     )
 
     data class Response(
-        val categories: List<CategoryDto>
+        val categories: List<ResponseItem>
     )
 
-    data class CategoryDto(
+    data class ResponseItem(
         val categoryId: Long,
         val name: String,
-        val categoryType: String,
+        val categoryType: Categories.Type,
         val description: String?
     )
 }

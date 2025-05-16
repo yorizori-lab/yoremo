@@ -10,18 +10,18 @@ class ListCategoriesService(
     private val categoriesRepository: CategoriesRepository
 ) {
     @Transactional(readOnly = true)
-    fun listByType(categoryType: String): ListCategories.Response {
-        val categories = categoriesRepository.findAllByCategoryType(categoryType)
+    fun listByType(request: ListCategories.Request): ListCategories.Response {
+        val categories = categoriesRepository.findAllByCategoryType(request.categoryType)
 
-        val categoryDtos = categories.map { category ->
-            ListCategories.CategoryDto(
-                categoryId = category.categoryId ?: throw IllegalStateException("카테고리 ID가 null입니다"),
-                name = category.name ?: "",
-                categoryType = category.categoryType ?: "",
-                description = category.description
-            )
-        }
-
-        return ListCategories.Response(categories = categoryDtos)
+        return ListCategories.Response(
+            categories = categories.map { category ->
+                ListCategories.ResponseItem(
+                    categoryId = category.categoryId!!,
+                    name = category.name,
+                    categoryType = category.categoryType,
+                    description = category.description
+                )
+            }
+        )
     }
 }

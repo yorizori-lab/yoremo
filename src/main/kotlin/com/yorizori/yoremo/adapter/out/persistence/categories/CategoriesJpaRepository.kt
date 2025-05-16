@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CategoriesJpaRepository : JpaRepository<Categories, Long> {
-    fun findAllByCategoryType(categoryType: String): List<Categories>
+    fun findAllByCategoryType(categoryType: Categories.Type): List<Categories>
 }
