@@ -1,5 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 
+import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import java.time.Instant
 
 class GetRecipes {
@@ -10,9 +11,9 @@ class GetRecipes {
         val recipeId: Long,
         val title: String,
         val description: String?,
-        val ingredients: String,
-        val seasonings: String,
-        val instructions: String,
+        val ingredients: List<Recipes.Ingredient>,
+        val seasonings: List<Recipes.Seasoning>,
+        val instructions: List<Recipes.Instruction>,
         val categoryType: Long?,
         val categorySituation: Long?,
         val categoryIngredient: Long?,

@@ -1,12 +1,14 @@
 package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 
+import com.yorizori.yoremo.domain.recipes.entity.Recipes
+
 class CreateRecipes {
     data class Request(
         val title: String,
         val description: String? = null,
-        val ingredients: String,
-        val seasonings: String,
-        val instructions: String,
+        val ingredients: List<Recipes.Ingredient>,
+        val seasonings: List<Recipes.Seasoning>,
+        val instructions: List<Recipes.Instruction>,
         val categoryTypeId: Long? = null,
         val categorySituationId: Long? = null,
         val categoryIngredientId: Long? = null,

@@ -79,24 +79,18 @@ class RecipesEmbeddingService(
         // 재료 정보 파싱 및 추가
         sb.appendLine("재료:")
         try {
-            val ingredientsArray = objectMapper.readTree(recipes.ingredients)
-            ingredientsArray.forEach { ingredient ->
-                val name = ingredient["name"]?.asText() ?: ""
-                val amount = ingredient["amount"]?.asText() ?: ingredient["amount"]?.asDouble()?.toString() ?: ""
-                val unit = ingredient["unit"]?.asText() ?: ""
-                val notes = ingredient["notes"]?.asText() ?: ""
-
-                sb.append("  - $name")
-                if (amount.isNotBlank() && unit.isNotBlank()) {
-                    sb.append(" $amount$unit")
-                } else if (amount.isNotBlank()) {
-                    sb.append(" $amount")
-                } else if (unit.isNotBlank()) {
-                    sb.append(" $unit")
+            recipes.ingredients.forEach {
+                sb.append("  - ${it.name}")
+                if (it.amount != null && !it.unit.isNullOrBlank()) {
+                    sb.append(" ${it.amount}${it.unit}")
+                } else if (it.amount != null) {
+                    sb.append(" ${it.amount}")
+                } else if (!it.unit.isNullOrBlank()) {
+                    sb.append(" ${it.unit}")
                 }
 
-                if (notes.isNotBlank()) {
-                    sb.append(" ($notes)")
+                if (!it.notes.isNullOrBlank()) {
+                    sb.append(" (${it.notes})")
                 }
                 sb.appendLine()
             }
@@ -108,19 +102,14 @@ class RecipesEmbeddingService(
         // 양념 정보 파싱 및 추가
         sb.appendLine("양념:")
         try {
-            val seasoningsArray = objectMapper.readTree(recipes.seasonings)
-            seasoningsArray.forEach { seasoning ->
-                val name = seasoning["name"]?.asText() ?: ""
-                val amount = seasoning["amount"]?.asText() ?: seasoning["amount"]?.asDouble()?.toString() ?: ""
-                val unit = seasoning["unit"]?.asText() ?: ""
-
-                sb.append("  - $name")
-                if (amount.isNotBlank() && unit.isNotBlank()) {
-                    sb.append(" $amount$unit")
-                } else if (amount.isNotBlank()) {
-                    sb.append(" $amount")
-                } else if (unit.isNotBlank()) {
-                    sb.append(" $unit")
+            recipes.seasonings.forEach {
+                sb.append("  - ${it.name}")
+                if (it.amount != null && !it.unit.isNullOrBlank()) {
+                    sb.append(" ${it.amount}${it.unit}")
+                } else if (it.amount != null) {
+                    sb.append(" ${it.amount}")
+                } else if (!it.unit.isNullOrBlank()) {
+                    sb.append(" ${it.unit}")
                 }
                 sb.appendLine()
             }
@@ -132,23 +121,11 @@ class RecipesEmbeddingService(
         // 조리 단계 파싱 및 추가
         sb.appendLine("조리방법:")
         try {
-            val instructionsArray = objectMapper.readTree(recipes.instructions)
-            // step_number 기준으로 정렬하기 위한 리스트 생성
-            val steps = mutableListOf<Pair<Int, String>>()
-
-            instructionsArray.forEach { step ->
-                val stepNumber = step["step_number"]?.asInt() ?: 0
-                val description = step["description"]?.asText() ?: ""
-                steps.add(Pair(stepNumber, description))
-            }
-
-            // 단계 번호대로 정렬
-            steps.sortBy { it.first }
-
-            // 정렬된 단계 출력
-            steps.forEach { (number, description) ->
-                sb.appendLine("  ${number}. $description")
-            }
+            recipes.instructions
+                .sortedBy { it.stepNumber }
+                .forEach { (number, description) ->
+                    sb.appendLine("  ${number}. $description")
+                }
         } catch (e: Exception) {
             logger.warn("조리 단계 파싱 실패: ${recipes.instructions}", e)
             sb.appendLine("  ${recipes.instructions}")
@@ -193,7 +170,9 @@ class RecipesEmbeddingService(
 
         recipes.categoryType?.let { metadata["category_type"] = it.categoryId.toString() }
         recipes.categorySituation?.let { metadata["category_situation"] = it.categoryId.toString() }
-        recipes.categoryIngredient?.let { metadata["category_ingredient"] = it.categoryId.toString() }
+        recipes.categoryIngredient?.let {
+            metadata["category_ingredient"] = it.categoryId.toString()
+        }
         recipes.categoryMethod?.let { metadata["category_method"] = it.categoryId.toString() }
 
         // 태그 메타데이터 추가 - List<String> 타입으로 수정됨

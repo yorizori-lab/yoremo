@@ -2,14 +2,13 @@ package com.yorizori.yoremo.domain.recipes.entity
 
 import com.yorizori.yoremo.domain.categories.entity.Categories
 import com.yorizori.yoremo.domain.common.BaseEntity
-import com.yorizori.yoremo.domain.common.convert.JsonStringConverter
 import jakarta.persistence.*
-import org.hibernate.type.SqlTypes
 import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 
 @Entity
 @Table(name = "recipes")
-class Recipes(
+data class Recipes(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val recipeId: Long? = null,
@@ -20,18 +19,15 @@ class Recipes(
 
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    @Convert(converter = JsonStringConverter::class)
-    val ingredients: String,
+    val ingredients: List<Ingredient>,
 
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    @Convert(converter = JsonStringConverter::class)
-    val seasonings: String,
+    val seasonings: List<Seasoning>,
 
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    @Convert(converter = JsonStringConverter::class)
-    val instructions: String,
+    val instructions: List<Instruction>,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_type")
@@ -62,4 +58,24 @@ class Recipes(
     @Column(name = "tags", columnDefinition = "_text")
     @JdbcTypeCode(SqlTypes.ARRAY)
     var tags: List<String>? = null
-) : BaseEntity()
+) : BaseEntity() {
+
+    data class Ingredient(
+        val name: String,
+        val amount: Int?,
+        val unit: String?,
+        val notes: String?
+    )
+
+    data class Seasoning(
+        val name: String,
+        val amount: Int?,
+        val unit: String?
+    )
+
+    data class Instruction(
+        val stepNumber: Int,
+        val description: String,
+        val imageUrl: String?
+    )
+}
