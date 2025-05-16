@@ -1,39 +1,31 @@
-package com.yorizori.yoremo.vectorstore
+package com.yorizori.yoremo.domain.recipes.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesJpaRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
-import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.VectorStore
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
+import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-@SpringBootTest
-class RecipesEmbeddingTest {
-
-    @Autowired
-    private lateinit var vectorStore: VectorStore
-
-    @Autowired
-    private lateinit var recipesJpaRepository: RecipesJpaRepository
-
+@Service
+class RecipesEmbeddingService(
+    private val vectorStore: VectorStore,
+    private val recipesJpaRepository: RecipesJpaRepository
+) {
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val tokenTextSplitter = TokenTextSplitter()
     private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
-    @Test
     @Transactional
-    fun embedRecipesFromDatabase() {
+    fun embedRecipesFromDatabase(pageSize: Int = 100): Int {
         logger.info("레시피 임베딩 시작...")
 
         // JPA 리포지토리에서 레시피 데이터 가져오기 (페이징 적용)
-        val pageSize = 100
         var pageNumber = 0
         var totalProcessed = 0
 
@@ -70,6 +62,7 @@ class RecipesEmbeddingTest {
         }
 
         logger.info("레시피 임베딩 완료: 총 ${totalProcessed}개의 레시피 처리")
+        return totalProcessed
     }
 
     private fun convertRecipesToDocument(recipes: Recipes): Document {
@@ -231,5 +224,4 @@ class RecipesEmbeddingTest {
 
         return Document(sb.toString(), metadata)
     }
-
 }
