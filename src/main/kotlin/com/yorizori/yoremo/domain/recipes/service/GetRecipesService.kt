@@ -15,7 +15,7 @@ class GetRecipesService(
     private val logger = LoggerFactory.getLogger(GetRecipesService::class.java)
 
     @Transactional(readOnly = true)
-    fun getRecipes(id: Int): GetRecipes.Response {
+    fun getRecipes(id: Long): GetRecipes.Response {
         // 디버깅을 위해 로깅 추가
         logger.info("Searching for recipe with ID: $id")
         val recipes = recipesRepository.findById(id)
@@ -40,7 +40,7 @@ class GetRecipesService(
             servingSize = recipes.servingSize,
             difficulty = recipes.difficulty,
             imageUrl = recipes.imageUrl,
-            tags = recipes.tagsText,
+            tags = recipes.tags,
             createdAt = recipes.createdAt,
             updatedAt = recipes.updatedAt
         )

@@ -160,25 +160,11 @@ class RecipesEmbeddingService(
         recipes.servingSize?.let { sb.appendLine("양: ${it}인분") }
         recipes.difficulty?.let { sb.appendLine("난이도: $it") }
 
-        // 태그 정보
-        recipes.tagsText?.let { tagsText ->
-            if (tagsText.isNotBlank()) {
-                // 태그 텍스트 파싱 (PostgreSQL의 _text 타입을 문자열로 처리)
-                try {
-                    // 태그 문자열에서 중괄호와 쌍따옴표 제거, 쉼표로 분리
-                    val tagsString = tagsText.trim()
-                        .removePrefix("{").removeSuffix("}")
-                        .replace("\"", "")
-
-                    val tags = tagsString.split(",").filter { it.isNotBlank() }
-                    if (tags.isNotEmpty()) {
-                        sb.append("태그: ")
-                        sb.appendLine(tags.joinToString(", "))
-                    }
-                } catch (e: Exception) {
-                    logger.warn("태그 파싱 실패: $tagsText", e)
-                    sb.appendLine("태그: $tagsText")
-                }
+        // 태그 정보 - List<String> 타입으로 수정됨
+        recipes.tags?.let { tagsList ->
+            if (tagsList.isNotEmpty()) {
+                sb.append("태그: ")
+                sb.appendLine(tagsList.joinToString(", "))
             }
         }
 
@@ -210,15 +196,10 @@ class RecipesEmbeddingService(
         recipes.categoryIngredient?.let { metadata["category_ingredient"] = it.categoryId.toString() }
         recipes.categoryMethod?.let { metadata["category_method"] = it.categoryId.toString() }
 
-        recipes.tagsText?.let { tagsText ->
-            try {
-                val tagsString = tagsText.trim().removePrefix("{").removeSuffix("}").replace("\"", "")
-                val tags = tagsString.split(",").filter { it.isNotBlank() }
-                if (tags.isNotEmpty()) {
-                    metadata["tags"] = tags.joinToString(",")
-                }
-            } catch (e: Exception) {
-                logger.warn("메타데이터 태그 파싱 실패: $tagsText", e)
+        // 태그 메타데이터 추가 - List<String> 타입으로 수정됨
+        recipes.tags?.let { tagsList ->
+            if (tagsList.isNotEmpty()) {
+                metadata["tags"] = tagsList.joinToString(",")
             }
         }
 
