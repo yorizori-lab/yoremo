@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.Query
 
 interface RecipesJpaRepository : JpaRepository<Recipes, Long> {
 
-    @Query("""
+    @Query(
+        """
     SELECT r FROM Recipes r 
     WHERE (:categoryTypeId IS NULL OR r.categoryType.categoryId = :categoryTypeId)
     AND (:categorySituationId IS NULL OR r.categorySituation.categoryId = :categorySituationId)
@@ -14,8 +15,9 @@ interface RecipesJpaRepository : JpaRepository<Recipes, Long> {
     AND (:categoryMethodId IS NULL OR r.categoryMethod.categoryId = :categoryMethodId)
     AND (:#{#tags == null || #tags.isEmpty()} = true OR 
          function('array_overlaps', r.tags, :tags) = true)
-    """)
-    fun findRecipesByFilters(
+    """
+    )
+    fun search(
         categoryTypeId: Long?,
         categorySituationId: Long?,
         categoryIngredientId: Long?,
