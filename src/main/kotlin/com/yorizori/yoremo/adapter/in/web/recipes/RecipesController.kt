@@ -33,7 +33,7 @@ class RecipesController(
         return createRecipesService.create(request)
     }
 
-    @GetMapping("/search/recipes")
+    @GetMapping("/recipes/search")
     fun list(
         request: ListRecipes.Request
     ): ListRecipes.Response {
