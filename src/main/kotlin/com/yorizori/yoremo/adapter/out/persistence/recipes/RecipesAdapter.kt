@@ -1,5 +1,7 @@
 package com.yorizori.yoremo.adapter.out.persistence.recipes
 
+import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.yorizori.yoremo.domain.categories.entity.QCategories
 import com.yorizori.yoremo.domain.recipes.entity.QRecipes.recipes
@@ -30,11 +32,37 @@ class RecipesAdapter(
                 command.categoryIngredientId?.let { recipes.categoryIngredient.categoryId.eq(it) },
                 command.categoryMethodId?.let { recipes.categoryMethod.categoryId.eq(it) },
                 command.difficulty?.let { recipes.difficulty.eq(it) },
-                command.tags?.let {
-                    // TODO: 태그 검색 조건 추가
-                    null
-                }
+                command.tags?.let { buildTagsCondition(it) }
             )
             .fetch()
+    }
+
+    /**
+     * 태그 검색 조건을 생성합니다 (OR 조건).
+     */
+    private fun buildTagsCondition(tags: List<String>): BooleanExpression? {
+        if (tags.isEmpty()) {
+            return null
+        }
+
+        var condition: BooleanExpression? = null
+
+        for (tag in tags) {
+
+            val tagWithDelimiter = ",$tag,"
+
+            val tagCondition = Expressions.stringTemplate(
+                "concat(',', array_to_string({0}, ','), ',')",
+                recipes.tags
+            ).like("%$tagWithDelimiter%")
+
+            condition = if (condition == null) {
+                tagCondition
+            } else {
+                condition.or(tagCondition)
+            }
+        }
+
+        return condition
     }
 }
