@@ -1,7 +1,5 @@
 package com.yorizori.yoremo.domain.recipes.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesJpaRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import org.slf4j.LoggerFactory
@@ -19,7 +17,6 @@ class RecipesEmbeddingService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val tokenTextSplitter = TokenTextSplitter()
-    private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
     @Transactional
     fun embedRecipesFromDatabase(pageSize: Int = 100): Int {
@@ -63,6 +60,31 @@ class RecipesEmbeddingService(
 
         logger.info("레시피 임베딩 완료: 총 ${totalProcessed}개의 레시피 처리")
         return totalProcessed
+    }
+    /**
+     * 단일 레시피를 임베딩
+     */
+    @Transactional
+    fun embedSingleRecipe(recipes: Recipes) {
+        logger.info("단일 레시피 임베딩 시작: ID ${recipes.recipeId}, 제목: ${recipes.title}")
+
+        try {
+            // 레시피를 문서로 변환
+            val document = convertRecipesToDocument(recipes)
+
+            // 문서 분할
+            val tokenizedDocuments = tokenTextSplitter.apply(listOf(document))
+
+            // 벡터 스토어에 추가
+            if (!tokenizedDocuments.isNullOrEmpty()) {
+                vectorStore.add(tokenizedDocuments)
+                logger.info("레시피 임베딩 완료: ID ${recipes.recipeId}")
+            } else {
+                logger.warn("분할된 문서가 없습니다: ID ${recipes.recipeId}")
+            }
+        } catch (e: Exception) {
+            logger.error("레시피 임베딩 실패: ID ${recipes.recipeId}", e)
+        }
     }
 
     private fun convertRecipesToDocument(recipes: Recipes): Document {
@@ -147,19 +169,19 @@ class RecipesEmbeddingService(
 
         // 카테고리 정보 추가
         recipes.categoryType?.let { category ->
-            sb.appendLine("종류: ${category.name ?: category.categoryId}")
+            sb.appendLine("종류: ${category.name}")
         }
 
         recipes.categorySituation?.let { category ->
-            sb.appendLine("상황: ${category.name ?: category.categoryId}")
+            sb.appendLine("상황: ${category.name}")
         }
 
         recipes.categoryIngredient?.let { category ->
-            sb.appendLine("주재료: ${category.name ?: category.categoryId}")
+            sb.appendLine("주재료: ${category.name}")
         }
 
         recipes.categoryMethod?.let { category ->
-            sb.appendLine("조리방법: ${category.name ?: category.categoryId}")
+            sb.appendLine("조리방법: ${category.name}")
         }
 
         // 메타데이터 구성

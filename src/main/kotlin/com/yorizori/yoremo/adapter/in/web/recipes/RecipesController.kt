@@ -2,8 +2,10 @@ package com.yorizori.yoremo.adapter.`in`.web.recipes
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
+import com.yorizori.yoremo.adapter.`in`.web.recipes.message.ListRecipes
 import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
 import com.yorizori.yoremo.domain.recipes.service.GetRecipesService
+import com.yorizori.yoremo.domain.recipes.service.ListRecipesService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/recipes/v1")
 class RecipesController(
     private val getRecipesService: GetRecipesService,
-    private val createRecipesService: CreateRecipesService
+    private val createRecipesService: CreateRecipesService,
+    private val listRecipesService: ListRecipesService
 ) {
     @GetMapping("/recipes/{id}")
     fun get(
@@ -28,5 +31,12 @@ class RecipesController(
         @RequestBody request: CreateRecipes.Request
     ): CreateRecipes.Response {
         return createRecipesService.create(request)
+    }
+
+    @GetMapping("/search/recipes")
+    fun list(
+        request: ListRecipes.Request
+    ): ListRecipes.Response {
+        return listRecipesService.listByFilters(request)
     }
 }
