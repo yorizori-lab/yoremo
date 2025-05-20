@@ -6,8 +6,6 @@ import com.yorizori.yoremo.adapter.`in`.web.recipes.message.SearchRecipes
 import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
 import com.yorizori.yoremo.domain.recipes.service.GetRecipesService
 import com.yorizori.yoremo.domain.recipes.service.ListRecipesService
-import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,9 +35,8 @@ class RecipesController(
 
     @GetMapping("/recipes/search")
     fun search(
-        request: SearchRecipes.Request,
-        @PageableDefault(size = 10) pageable: Pageable
-    ): SearchRecipes.PageResponse {
-        return searchRecipesService.search(request, pageable)
+        request: SearchRecipes.Request
+    ): SearchRecipes.Response {
+        return searchRecipesService.search(request)
     }
 }

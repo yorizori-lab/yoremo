@@ -3,7 +3,7 @@ package com.yorizori.yoremo.domain.recipes.service
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.SearchRecipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesSearchCommand
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -12,9 +12,9 @@ class ListRecipesService(
     private val recipesRepository: RecipesRepository
 ) {
     @Transactional(readOnly = true)
-    fun search(request: SearchRecipes.Request, pageable: Pageable): SearchRecipes.PageResponse {
+    fun search(request: SearchRecipes.Request): SearchRecipes.Response {
         val recipes = recipesRepository.search(
-            RecipesSearchCommand(
+            command = RecipesSearchCommand(
                 categoryTypeId = request.categoryTypeId,
                 categorySituationId = request.categorySituationId,
                 categoryIngredientId = request.categoryIngredientId,
@@ -22,42 +22,35 @@ class ListRecipesService(
                 difficulty = request.difficulty,
                 tags = request.tags
             ),
-            pageable
+            pageable = PageRequest.of(request.page!!, request.pageSize!!)
         )
 
-        // 페이지 결과 변환
-        val content = recipes.content.map { recipes ->
+        val content = recipes.content.map {
             SearchRecipes.ResponseItem(
-                recipeId = recipes.recipeId!!,
-                title = recipes.title,
-                description = recipes.description,
-                ingredients = recipes.ingredients,
-                seasonings = recipes.seasonings,
-                instructions = recipes.instructions,
-                categoryType = recipes.categoryType?.name,
-                categorySituation = recipes.categorySituation?.name,
-                categoryIngredient = recipes.categoryIngredient?.name,
-                categoryMethod = recipes.categoryMethod?.name,
-                prepTime = recipes.prepTime,
-                cookTime = recipes.cookTime,
-                servingSize = recipes.servingSize,
-                difficulty = recipes.difficulty?.description,
-                imageUrl = recipes.imageUrl,
-                tags = recipes.tags,
-                createdAt = recipes.createdAt,
-                updatedAt = recipes.updatedAt
+                recipeId = it.recipeId!!,
+                title = it.title,
+                description = it.description,
+                ingredients = it.ingredients,
+                seasonings = it.seasonings,
+                instructions = it.instructions,
+                categoryType = it.categoryType?.name,
+                categorySituation = it.categorySituation?.name,
+                categoryIngredient = it.categoryIngredient?.name,
+                categoryMethod = it.categoryMethod?.name,
+                prepTime = it.prepTime,
+                cookTime = it.cookTime,
+                servingSize = it.servingSize,
+                difficulty = it.difficulty?.description,
+                imageUrl = it.imageUrl,
+                tags = it.tags,
+                createdAt = it.createdAt,
+                updatedAt = it.updatedAt
             )
         }
 
-        return SearchRecipes.PageResponse(
-            recipes = content,
-            totalElements = recipes.totalElements,
-            totalPages = recipes.totalPages,
-            number = recipes.number,
-            size = recipes.size,
-            first = recipes.isFirst,
-            last = recipes.isLast,
-            empty = recipes.isEmpty
+        return SearchRecipes.Response(
+            totalCount = recipes.totalElements.toInt(),
+            recipes = content
         )
     }
 }

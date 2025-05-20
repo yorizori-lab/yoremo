@@ -10,23 +10,15 @@ class SearchRecipes {
         val categoryIngredientId: Long? = null,
         val categoryMethodId: Long? = null,
         val difficulty: Recipes.Difficulty? = null,
-        val tags: List<String>? = null
-    )
-
-    data class Response(
-        val recipes: List<ResponseItem>
+        val tags: List<String>? = null,
+        val page: Int? = 0,
+        val pageSize: Int? = 10
     )
 
     // 페이징 응답을 위한 새 클래스
-    data class PageResponse(
-        val recipes: List<ResponseItem>,
-        val totalElements: Long,
-        val totalPages: Int,
-        val number: Int,
-        val size: Int,
-        val first: Boolean,
-        val last: Boolean,
-        val empty: Boolean
+    data class Response(
+        val totalCount: Int,
+        val recipes: List<ResponseItem>
     )
 
     data class ResponseItem(
