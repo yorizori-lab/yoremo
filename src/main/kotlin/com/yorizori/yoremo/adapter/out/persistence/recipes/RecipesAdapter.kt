@@ -7,14 +7,17 @@ import com.yorizori.yoremo.domain.categories.entity.QCategories
 import com.yorizori.yoremo.domain.recipes.entity.QRecipes.recipes
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesSearchCommand
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 
 @Repository
 class RecipesAdapter(
     private val queryFactory: JPAQueryFactory
 ) {
-    fun search(command: RecipesSearchCommand): List<Recipes> {
-        return queryFactory
+    fun search(command: RecipesSearchCommand, pageable: Pageable): Page<Recipes> {
+        val content = queryFactory
             .selectFrom(recipes)
             .join(recipes.categoryType, QCategories(Recipes::categoryType.name)).fetchJoin()
             .join(
@@ -34,7 +37,25 @@ class RecipesAdapter(
                 command.difficulty?.let { recipes.difficulty.eq(it) },
                 command.tags?.let { buildTagsCondition(it) }
             )
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .orderBy(recipes.createdAt.desc())
             .fetch()
+
+        val total = queryFactory
+            .select(recipes.count())
+            .from(recipes)
+            .where(
+                command.categoryTypeId?.let { recipes.categoryType.categoryId.eq(it) },
+                command.categorySituationId?.let { recipes.categorySituation.categoryId.eq(it) },
+                command.categoryIngredientId?.let { recipes.categoryIngredient.categoryId.eq(it) },
+                command.categoryMethodId?.let { recipes.categoryMethod.categoryId.eq(it) },
+                command.difficulty?.let { recipes.difficulty.eq(it) },
+                command.tags?.let { buildTagsCondition(it) }
+            )
+            .fetchOne() ?: 0L
+
+        return PageImpl(content, pageable, total)
     }
 
     private fun buildTagsCondition(tags: List<String>): BooleanExpression? {

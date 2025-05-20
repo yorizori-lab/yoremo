@@ -3,6 +3,8 @@ package com.yorizori.yoremo.domain.recipes.port
 import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesAdapter
 import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesJpaRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import kotlin.jvm.optionals.getOrNull
 
@@ -22,8 +24,9 @@ class RecipesRepository(
 
     // 여러 조건으로 검색
     fun search(
-        command: RecipesSearchCommand
-    ): List<Recipes> {
-        return recipesAdapter.search(command)
+        command: RecipesSearchCommand,
+        pageable: Pageable
+    ): Page<Recipes> {
+        return recipesAdapter.search(command, pageable)
     }
 }
