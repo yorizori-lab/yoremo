@@ -37,32 +37,16 @@ class RecipesAdapter(
             .fetch()
     }
 
-    /**
-     * 태그 검색 조건을 생성합니다 (OR 조건).
-     */
     private fun buildTagsCondition(tags: List<String>): BooleanExpression? {
         if (tags.isEmpty()) {
             return null
         }
 
-        var condition: BooleanExpression? = null
-
-        for (tag in tags) {
-
-            val tagWithDelimiter = ",$tag,"
-
-            val tagCondition = Expressions.stringTemplate(
-                "concat(',', array_to_string({0}, ','), ',')",
-                recipes.tags
-            ).like("%$tagWithDelimiter%")
-
-            condition = if (condition == null) {
-                tagCondition
-            } else {
-                condition.or(tagCondition)
-            }
-        }
-
-        return condition
+        // PostgreSQL 사용자 정의 함수 호출
+        return Expressions.booleanTemplate(
+            "function('array_contains_any', {0}, {1}) = true",
+            recipes.tags,
+            tags.toTypedArray()
+        )
     }
 }
