@@ -61,6 +61,7 @@ class RecipesEmbeddingService(
         logger.info("레시피 임베딩 완료: 총 ${totalProcessed}개의 레시피 처리")
         return totalProcessed
     }
+
     /**
      * 단일 레시피를 임베딩
      */

@@ -1,13 +1,17 @@
 package com.yorizori.yoremo.domain.recipes.port
 
+import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesAdapter
 import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesJpaRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import kotlin.jvm.optionals.getOrNull
 
 @Component
 class RecipesRepository(
-    private val recipesJpaRepository: RecipesJpaRepository
+    private val recipesJpaRepository: RecipesJpaRepository,
+    private val recipesAdapter: RecipesAdapter
 ) {
     fun findById(id: Long): Recipes? {
         return recipesJpaRepository.findById(id).getOrNull()
@@ -19,20 +23,10 @@ class RecipesRepository(
     }
 
     // 여러 조건으로 검색
-    fun findAllByFilters(
-        categoryTypeId: Long? = null,
-        categorySituationId: Long? = null,
-        categoryIngredientId: Long? = null,
-        categoryMethodId: Long? = null,
-        difficulty: String? = null,
-        tags: List<String>? = null
-    ): List<Recipes> {
-        return recipesJpaRepository.findRecipesByFilters(
-            categoryTypeId,
-            categorySituationId,
-            categoryIngredientId,
-            categoryMethodId,
-            difficulty,
-            tags)
+    fun search(
+        command: RecipesSearchCommand,
+        pageable: Pageable
+    ): Page<Recipes> {
+        return recipesAdapter.search(command, pageable)
     }
 }
