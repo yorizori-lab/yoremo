@@ -1,13 +1,16 @@
 package com.yorizori.yoremo.adapter.`in`.web.recipes
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
+import com.yorizori.yoremo.adapter.`in`.web.recipes.message.DeleteRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.SearchRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
 import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
+import com.yorizori.yoremo.domain.recipes.service.DeleteRecipesService
 import com.yorizori.yoremo.domain.recipes.service.GetRecipesService
 import com.yorizori.yoremo.domain.recipes.service.ListRecipesService
 import com.yorizori.yoremo.domain.recipes.service.UpdateRecipesService
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -21,6 +24,7 @@ class RecipesController(
     private val getRecipesService: GetRecipesService,
     private val createRecipesService: CreateRecipesService,
     private val updateRecipesService: UpdateRecipesService,
+    private val deleteRecipesService: DeleteRecipesService,
     private val searchRecipesService: ListRecipesService
 ) {
     @GetMapping("/recipes/{id}")
@@ -43,6 +47,13 @@ class RecipesController(
         @RequestBody updateRequest: UpdateRecipes.Request
     ): UpdateRecipes.Response {
         return updateRecipesService.update(request.id, updateRequest)
+    }
+
+    @DeleteMapping("/recipes/{id}")
+    fun delete(
+        request: DeleteRecipes.PathVariable
+    ): DeleteRecipes.Response {
+        return deleteRecipesService.delete(request.id)
     }
 
     @GetMapping("/recipes/search")

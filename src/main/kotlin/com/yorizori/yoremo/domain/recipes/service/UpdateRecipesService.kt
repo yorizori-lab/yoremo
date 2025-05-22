@@ -22,26 +22,16 @@ class UpdateRecipesService(
                 "Recipe not found with id: $id"
             )
 
-        val categoryType = request.categoryTypeId
-            ?.let { categoriesRepository.findById(it) }
-        val categorySituation = request.categorySituationId
-            ?.let { categoriesRepository.findById(it) }
-        val categoryIngredient = request.categoryIngredientId
-            ?.let { categoriesRepository.findById(it) }
-        val categoryMethod = request.categoryMethodId
-            ?.let { categoriesRepository.findById(it) }
-
-        if (
-            categoryType == null ||
-            categoryMethod == null ||
-            categorySituation == null ||
-            categoryIngredient == null
-        ) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "invalid parameter. request: $request"
+        val categories = categoriesRepository.findByIdIn(
+            listOfNotNull(
+                request.categoryTypeId,
+                request.categorySituationId,
+                request.categoryIngredientId,
+                request.categoryMethodId
             )
-        }
+        )
+
+        val categoriesMap = categories.associateBy { it.categoryId }
 
         val updatedRecipe = existingRecipe.copy(
             recipeId = id,
@@ -50,10 +40,10 @@ class UpdateRecipesService(
             ingredients = request.ingredients,
             seasonings = request.seasonings,
             instructions = request.instructions,
-            categoryType = categoryType,
-            categorySituation = categorySituation,
-            categoryIngredient = categoryIngredient,
-            categoryMethod = categoryMethod,
+            categoryType = categoriesMap[request.categoryTypeId],
+            categorySituation = categoriesMap[request.categorySituationId],
+            categoryIngredient = categoriesMap[request.categoryIngredientId],
+            categoryMethod = categoriesMap[request.categoryMethodId],
             prepTime = request.prepTime,
             cookTime = request.cookTime,
             servingSize = request.servingSize,

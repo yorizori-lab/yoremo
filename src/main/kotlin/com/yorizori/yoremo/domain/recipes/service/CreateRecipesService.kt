@@ -4,10 +4,8 @@ import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 class CreateRecipesService(
@@ -17,26 +15,16 @@ class CreateRecipesService(
 ) {
     @Transactional
     fun create(request: CreateRecipes.Request): CreateRecipes.Response {
-        val categoryType = request.categoryTypeId
-            ?.let { categoriesRepository.findById(it) }
-        val categorySituation = request.categorySituationId
-            ?.let { categoriesRepository.findById(it) }
-        val categoryIngredient = request.categoryIngredientId
-            ?.let { categoriesRepository.findById(it) }
-        val categoryMethod = request.categoryMethodId
-            ?.let { categoriesRepository.findById(it) }
-
-        if (
-            categoryType == null ||
-            categoryMethod == null ||
-            categorySituation == null ||
-            categoryIngredient == null
-        ) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "invalid parameter. request: $request"
+        val categories = categoriesRepository.findByIdIn(
+            listOfNotNull(
+                request.categoryTypeId,
+                request.categorySituationId,
+                request.categoryIngredientId,
+                request.categoryMethodId
             )
-        }
+        )
+
+        val categoriesMap = categories.associateBy { it.categoryId }
 
         val recipes = Recipes(
             title = request.title,
@@ -44,16 +32,16 @@ class CreateRecipesService(
             ingredients = request.ingredients,
             seasonings = request.seasonings,
             instructions = request.instructions,
-            categoryType = categoryType,
-            categorySituation = categorySituation,
-            categoryIngredient = categoryIngredient,
-            categoryMethod = categoryMethod,
+            categoryType = categoriesMap[request.categoryTypeId],
+            categorySituation = categoriesMap[request.categorySituationId],
+            categoryIngredient = categoriesMap[request.categoryIngredientId],
+            categoryMethod = categoriesMap[request.categoryMethodId],
             prepTime = request.prepTime,
             cookTime = request.cookTime,
             servingSize = request.servingSize,
             difficulty = request.difficulty,
             imageUrl = request.imageUrl,
-            tags = request.tags // 직접 List<String>으로 전달
+            tags = request.tags
         )
 
         val savedRecipes = recipesRepository.save(recipes)
