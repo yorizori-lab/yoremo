@@ -2,10 +2,10 @@ package com.yorizori.yoremo.domain.sample.port
 
 import com.yorizori.yoremo.adapter.out.persistence.sample.SampleJpaRepository
 import com.yorizori.yoremo.domain.sample.entity.Sample
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import kotlin.jvm.optionals.getOrNull
 
-@Component
+@Repository
 class SampleRepository(
     private val sampleJpaRepository: SampleJpaRepository
 ) {

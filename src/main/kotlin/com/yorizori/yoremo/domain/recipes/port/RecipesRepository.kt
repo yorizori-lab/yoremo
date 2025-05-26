@@ -5,10 +5,10 @@ import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesJpaRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import kotlin.jvm.optionals.getOrNull
 
-@Component
+@Repository
 class RecipesRepository(
     private val recipesJpaRepository: RecipesJpaRepository,
     private val recipesAdapter: RecipesAdapter
