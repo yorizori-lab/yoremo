@@ -22,6 +22,10 @@ class RecipesRepository(
         return recipesJpaRepository.save(recipes)
     }
 
+    fun deleteById(id: Long) {
+        return recipesJpaRepository.deleteById(id)
+    }
+
     // 여러 조건으로 검색
     fun search(
         command: RecipesSearchCommand,
