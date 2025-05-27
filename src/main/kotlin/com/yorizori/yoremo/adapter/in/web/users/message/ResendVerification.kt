@@ -1,6 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.users.message
 
-class ResendVerification {
+abstract class ResendVerification {
     data class Request(
         val email: String
     )

@@ -32,6 +32,7 @@ class OAuth2UserService(
             return handleExistingSocialAccount(existingSocialAccount, profileImageUrl)
         }
 
+        // TODO: 수정 해야됨
         // 2. 이메일로 기존 사용자 확인
         val existingUser = usersRepository.findByEmail(email)
 
@@ -46,7 +47,7 @@ class OAuth2UserService(
             )
         } else {
             // 신규 사용자
-            createNewUserWithSocialAccount(email, name, provider, providerId, profileImageUrl)
+            registerUserWithSocialAccount(email, name, provider, providerId, profileImageUrl)
         }
     }
 
@@ -89,7 +90,7 @@ class OAuth2UserService(
         return usersRepository.save(updatedUser)
     }
 
-    private fun createNewUserWithSocialAccount(
+    private fun registerUserWithSocialAccount(
         email: String,
         name: String,
         provider: SocialAccounts.Provider,

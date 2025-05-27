@@ -3,7 +3,7 @@ package com.yorizori.yoremo.adapter.`in`.web.users.message
 import com.yorizori.yoremo.domain.users.entity.SocialAccounts
 import com.yorizori.yoremo.domain.users.entity.Users
 
-class GetMe {
+abstract class GetMe {
 
     data class Response(
         val userId: Long,

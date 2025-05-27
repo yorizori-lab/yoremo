@@ -1,19 +1,17 @@
 package com.yorizori.yoremo.adapter.out.email
 
+import com.yorizori.yoremo.adapter.`in`.web.constant.YoremoHttpUrl
 import com.yorizori.yoremo.domain.users.port.EmailSender
 import jakarta.mail.internet.MimeMessage
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Component
 
 @Component
 class GmailSender(
-    private val javaMailSender: JavaMailSender
+    private val javaMailSender: JavaMailSender,
+    private val yoremoHttpUrl: YoremoHttpUrl
 ) : EmailSender {
-
-    @Value("\${app.frontend.base-url}")
-    private lateinit var baseUrl: String
 
     private val expiryMinutes = 5
 
@@ -51,7 +49,7 @@ class GmailSender(
     }
 
     private fun createVerificationEmailHtml(name: String, token: String): String {
-        val verificationUrl = "$baseUrl/auth/verify-email?token=$token"
+        val verificationUrl = yoremoHttpUrl.emailVerificationUrl(token)
         return """
             <!DOCTYPE html>
             <html>
@@ -108,7 +106,7 @@ class GmailSender(
     }
 
     private fun createPasswordResetEmailHtml(name: String, token: String): String {
-        val resetUrl = "$baseUrl/auth/reset-password?token=$token"
+        val resetUrl = yoremoHttpUrl.passwordResetUrl(token)
         return """
             <!DOCTYPE html>
             <html>
@@ -214,7 +212,7 @@ class GmailSender(
                         
                         <!-- 시작하기 버튼 -->
                         <div style="text-align: center; margin: 40px 0;">
-                            <a href="$baseUrl" 
+                            <a href="${yoremoHttpUrl.frontendBaseUrl}" 
                                style="display: inline-block; background: linear-gradient(135deg, #00b894, #00cec9); 
                                       color: white; text-decoration: none; padding: 15px 40px; 
                                       border-radius: 50px; font-size: 18px; font-weight: bold; 

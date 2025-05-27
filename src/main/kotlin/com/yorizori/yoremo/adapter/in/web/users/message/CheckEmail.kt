@@ -1,6 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.users.message
 
-class CheckEmail {
+abstract class CheckEmail {
     data class Request(
         val email: String
     )

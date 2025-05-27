@@ -1,22 +1,21 @@
 package com.yorizori.yoremo.adapter.`in`.web.config
 
+import com.yorizori.yoremo.adapter.`in`.web.constant.YoremoHttpUrl
 import com.yorizori.yoremo.domain.users.entity.SocialAccounts
 import com.yorizori.yoremo.domain.users.service.OAuth2UserService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Component
+import java.net.URLEncoder
 
 @Component
 class OAuth2SuccessHandler(
-    private val oauth2UserService: OAuth2UserService
+    private val oauth2UserService: OAuth2UserService,
+    private val yoremoHttpUrl: YoremoHttpUrl
 ) : AuthenticationSuccessHandler {
-
-    @Value("\${app.frontend.base-url}")
-    private lateinit var frontendBaseUrl: String
 
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
@@ -26,9 +25,7 @@ class OAuth2SuccessHandler(
         val oauth2User = authentication.principal as OAuth2User
 
         try {
-            val registrationId = getRegistrationId(request)
-            val provider = mapToProvider(registrationId)
-
+            val provider = mapToProvider(request)
             val userInfo = extractUserInfo(oauth2User, provider)
 
             val user = oauth2UserService.processOAuth2User(
@@ -39,22 +36,23 @@ class OAuth2SuccessHandler(
                 profileImageUrl = userInfo.profileImageUrl
             )
 
+            // 이렇게 해도 @AuthenticationPrincipal 어노테이션을 통해 유저 식별 가능한지 확인
             request.session.setAttribute("user", user)
 
-            response.sendRedirect("$frontendBaseUrl/auth/oauth/success")
+            response.sendRedirect(yoremoHttpUrl.oAuthSuccessUrl)
         } catch (e: Exception) {
             // 에러 발생 시 실패 페이지로 리다이렉트
-            response.sendRedirect("$frontendBaseUrl/auth/oauth/error?message=${e.message}")
+            response.sendRedirect(
+                yoremoHttpUrl.oAuthFailureUrl(
+                    message = URLEncoder.encode(e.message, Charsets.UTF_8)
+                )
+            )
         }
     }
 
-    private fun getRegistrationId(request: HttpServletRequest): String {
-        // "/oauth2/authorization/google" -> "google"
-        val uri = request.requestURI
-        return uri.substringAfterLast("/")
-    }
+    private fun mapToProvider(request: HttpServletRequest): SocialAccounts.Provider {
+        val registrationId = request.requestURI.substringAfterLast("/")
 
-    private fun mapToProvider(registrationId: String): SocialAccounts.Provider {
         return when (registrationId.lowercase()) {
             "google" -> SocialAccounts.Provider.GOOGLE
             "kakao" -> SocialAccounts.Provider.KAKAO

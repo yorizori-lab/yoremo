@@ -1,6 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.users.message
 
-class VerifyEmail {
+abstract class VerifyEmail {
     data class Request(
         val token: String
     )

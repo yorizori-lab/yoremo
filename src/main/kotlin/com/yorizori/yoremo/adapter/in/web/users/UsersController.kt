@@ -33,6 +33,17 @@ class UsersController(
     private val loginService: LoginService,
     private val getMeService: GetMeService
 ) {
+    /**
+     * 인증/인가
+     *
+     * - 로그인 요청
+     * 로그인 -> 로그인 성공 -> 세션 쿠키 발급
+     * 세션 repository redis, db 등
+     *
+     * - 로그인 이후
+     * API 요청할 때마다 세션 쿠키를 통해 인증된 사용자 정보 조회
+     * authorization 필터 -> 세션 쿠키를 통해 인증된 사용자 정보 조회 -> @AuthenticationPrincipal
+     */
 
     @PostMapping("/check-email")
     fun checkEmail(

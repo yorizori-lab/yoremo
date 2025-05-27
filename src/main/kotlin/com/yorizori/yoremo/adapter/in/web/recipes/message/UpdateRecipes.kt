@@ -2,7 +2,7 @@ package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 
-class UpdateRecipes {
+abstract class UpdateRecipes {
 
     data class PathVariable(val id: Long)
 

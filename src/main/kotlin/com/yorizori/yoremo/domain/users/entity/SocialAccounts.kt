@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 
+@Deprecated("삭제")
 @Entity
 @Table(name = "social_accounts")
 data class SocialAccounts(
