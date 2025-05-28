@@ -23,8 +23,11 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: talented-herring-42264.upstash.io
       port: 6379
+      password: ${UPSTASH_REDIS_REST_TOKEN}
+      ssl:
+        enabled: true
 
   mail:
     host: smtp.gmail.com
@@ -38,6 +41,8 @@ spring:
           starttls:
             enable: true
             required: true
+          ssl:
+            trust: smtp.gmail.com
         debug: false
 
   security:
