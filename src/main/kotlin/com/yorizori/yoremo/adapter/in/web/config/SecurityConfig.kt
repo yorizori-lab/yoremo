@@ -10,6 +10,7 @@ import com.yorizori.yoremo.domain.users.port.EmailSender
 import com.yorizori.yoremo.domain.users.port.UsersRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
@@ -117,10 +118,11 @@ class SecurityConfig(
                     .requestMatchers("/api/users/v1/login").permitAll()
                     .requestMatchers("/api/users/v1/verify-email").permitAll()
                     .requestMatchers("/api/users/v1/resend-verification").permitAll()
+                    .requestMatchers("/api/users/v1/check-email").permitAll()
                     // 레시피
-                    .requestMatchers("/api/recipes/v1/recipes").permitAll()
-                    .requestMatchers("/api/recipes/v1/recipes/*").permitAll()
-                    .requestMatchers("/api/recipes/v1/recipes/search").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/recipes/v1/recipes").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/recipes/v1/recipes/*").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/recipes/v1/recipes/search").permitAll()
                     // 카테고리
                     .requestMatchers("/api/categories/v1/**").permitAll()
                     .anyRequest().authenticated()
