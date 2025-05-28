@@ -1,18 +1,19 @@
 package com.yorizori.yoremo.domain.users.service
 
 import com.yorizori.yoremo.adapter.`in`.web.users.message.ResendVerification
+import com.yorizori.yoremo.adapter.out.redis.RedisTokenService
 import com.yorizori.yoremo.domain.users.port.EmailSender
 import com.yorizori.yoremo.domain.users.port.UsersRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @Service
 class ResendVerificationService(
     private val usersRepository: UsersRepository,
+    private val redisTokenService: RedisTokenService,
     private val emailSender: EmailSender
 ) {
     @Transactional
@@ -23,7 +24,7 @@ class ResendVerificationService(
                 "존재하지 않는 사용자입니다."
             )
 
-        if (user.verificationToken == null) {
+        if (user.isEmailVerified) {
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "이미 인증된 계정입니다."
@@ -31,22 +32,17 @@ class ResendVerificationService(
         }
 
         val newToken = UUID.randomUUID().toString()
-        val newExpiresAt = Instant.now().plusSeconds(5 * 60) // 5분
 
-        val userWithNewToken = user.copy(
-            verificationToken = newToken,
-            tokenExpiresAt = newExpiresAt
-        )
-        usersRepository.save(userWithNewToken)
+        redisTokenService.saveToken(user.email, newToken)
 
         emailSender.sendVerificationEmail(
-            email = userWithNewToken.email,
-            token = userWithNewToken.verificationToken!!,
-            name = userWithNewToken.name
+            email = user.email,
+            token = newToken,
+            name = user.name
         )
 
         return ResendVerification.Response(
-            email = userWithNewToken.email
+            email = user.email
         )
     }
 }

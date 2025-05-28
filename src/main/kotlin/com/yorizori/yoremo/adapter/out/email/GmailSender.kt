@@ -21,7 +21,7 @@ class GmailSender(
 
         helper.setTo(email)
         helper.setSubject("✉️ 요레모 이메일 인증")
-        helper.setText(createVerificationEmailHtml(name, token), true)
+        helper.setText(createVerificationEmailHtml(email, name, token), true)
 
         javaMailSender.send(message)
     }
@@ -32,7 +32,7 @@ class GmailSender(
 
         helper.setTo(email)
         helper.setSubject("🔐 요레모 비밀번호 재설정")
-        helper.setText(createPasswordResetEmailHtml(name, token), true)
+        helper.setText(createPasswordResetEmailHtml(email, name, token), true)
 
         javaMailSender.send(message)
     }
@@ -48,8 +48,8 @@ class GmailSender(
         javaMailSender.send(message)
     }
 
-    private fun createVerificationEmailHtml(name: String, token: String): String {
-        val verificationUrl = yoremoHttpUrl.emailVerificationUrl(token)
+    private fun createVerificationEmailHtml(email: String, name: String, token: String): String {
+        val verificationUrl = yoremoHttpUrl.emailVerificationUrl(token, email)
         return """
             <!DOCTYPE html>
             <html>
@@ -105,8 +105,8 @@ class GmailSender(
         """.trimIndent()
     }
 
-    private fun createPasswordResetEmailHtml(name: String, token: String): String {
-        val resetUrl = yoremoHttpUrl.passwordResetUrl(token)
+    private fun createPasswordResetEmailHtml(email: String, name: String, token: String): String {
+        val resetUrl = yoremoHttpUrl.passwordResetUrl(token, email)
         return """
             <!DOCTYPE html>
             <html>

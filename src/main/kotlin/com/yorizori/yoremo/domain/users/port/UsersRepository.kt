@@ -20,10 +20,6 @@ class UsersRepository(
         return usersJpaRepository.findByEmail(email)
     }
 
-    fun findByVerificationToken(token: String): Users? {
-        return usersJpaRepository.findByVerificationToken(token)
-    }
-
     fun existsByEmail(email: String): Boolean {
         return usersJpaRepository.existsByEmail(email)
     }

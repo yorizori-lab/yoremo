@@ -1,5 +1,6 @@
 package com.yorizori.yoremo.domain.users.service
 
+import com.yorizori.yoremo.adapter.out.redis.RedisTokenService
 import com.yorizori.yoremo.domain.users.entity.SocialAccounts
 import com.yorizori.yoremo.domain.users.entity.Users
 import com.yorizori.yoremo.domain.users.port.EmailSender
@@ -11,7 +12,8 @@ import java.time.Instant
 @Service
 class OAuth2UserService(
     private val usersRepository: UsersRepository,
-    private val emailSender: EmailSender
+    private val emailSender: EmailSender,
+    private val redisTokenService: RedisTokenService
 ) {
     @Transactional
     fun processOAuth2User(
@@ -21,49 +23,33 @@ class OAuth2UserService(
         providerId: String,
         profileImageUrl: String? = null
     ): Users {
-        // 1. 기존 소셜 계정 확인
         val existingSocialAccount = usersRepository.findSocialAccountByProviderAndProviderId(
             provider,
             providerId
         )
 
         if (existingSocialAccount != null) {
-            // 기존 소셜 계정이 있음 → 해당 사용자로 로그인
-            return handleExistingSocialAccount(existingSocialAccount, profileImageUrl)
+            return handleExistingSocialAccount(existingSocialAccount)
         }
 
-        // TODO: 수정 해야됨
-        // 2. 이메일로 기존 사용자 확인
         val existingUser = usersRepository.findByEmail(email)
 
         return if (existingUser != null) {
-            // 기존 사용자에 새 소셜 계정 연결
             linkSocialAccountToExistingUser(
                 existingUser,
                 provider,
                 providerId,
-                email,
-                profileImageUrl
+                email
             )
         } else {
-            // 신규 사용자
             registerUserWithSocialAccount(email, name, provider, providerId, profileImageUrl)
         }
     }
 
-    private fun handleExistingSocialAccount(
-        socialAccount: SocialAccounts,
-        profileImageUrl: String?
-    ): Users {
+    private fun handleExistingSocialAccount(socialAccount: SocialAccounts): Users {
         val user = usersRepository.findById(socialAccount.userId)!!
 
-        val updatedUser = if (profileImageUrl != null && user.profileImageUrl != profileImageUrl) {
-            user.copy(profileImageUrl = profileImageUrl)
-        } else {
-            user
-        }
-
-        val loggedInUser = updatedUser.copy(lastLoginAt = Instant.now())
+        val loggedInUser = user.copy(lastLoginAt = Instant.now())
         return usersRepository.save(loggedInUser)
     }
 
@@ -71,8 +57,7 @@ class OAuth2UserService(
         existingUser: Users,
         provider: SocialAccounts.Provider,
         providerId: String,
-        providerEmail: String,
-        profileImageUrl: String?
+        providerEmail: String
     ): Users {
         val socialAccount = SocialAccounts(
             userId = existingUser.userId!!,
@@ -82,8 +67,14 @@ class OAuth2UserService(
         )
         usersRepository.saveSocialAccount(socialAccount)
 
+        redisTokenService.deleteToken(existingUser.email)
+
+        /*
+        * 회원가입 후, 이메일 인증이 안된 상태로
+        * 소셜 로그인을 시도한 경우, 이메일 확인으로 변경
+         */
         val updatedUser = existingUser.copy(
-            profileImageUrl = profileImageUrl ?: existingUser.profileImageUrl,
+            isEmailVerified = true,
             lastLoginAt = Instant.now()
         )
 
@@ -102,8 +93,7 @@ class OAuth2UserService(
             password = null,
             name = name,
             profileImageUrl = profileImageUrl,
-            verificationToken = null,
-            tokenExpiresAt = null,
+            isEmailVerified = true,
             lastLoginAt = Instant.now()
         )
 
