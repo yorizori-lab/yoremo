@@ -43,7 +43,7 @@ class RegisterAuthenticationFilter(
         }
 
         if (usersRepository.existsByEmail(registerRequest.email)) {
-            throw IllegalArgumentException("Email already exists: ${registerRequest.email}")
+            throw IllegalArgumentException("이미 사용 중인 이메일입니다.")
         }
 
         val encodedPassword = passwordEncoder.encode(registerRequest.password)

@@ -17,13 +17,6 @@ class EmailVerificationService(
 ) {
     @Transactional
     fun verifyEmail(request: VerifyEmail.Request): VerifyEmail.Response {
-        if (!redisTokenService.verifyToken(request.email, request.token)) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Invalid verification token."
-            )
-        }
-
         val user = usersRepository.findByEmail(request.email)
             ?: throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
@@ -34,6 +27,13 @@ class EmailVerificationService(
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "이미 인증된 계정입니다."
+            )
+        }
+
+        if (!redisTokenService.verifyToken(request.email, request.token)) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "토큰이 만료되었습니다. 다시 인증을 시도해주세요."
             )
         }
 

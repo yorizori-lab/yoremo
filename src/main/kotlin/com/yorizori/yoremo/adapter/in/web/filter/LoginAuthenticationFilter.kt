@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
@@ -39,14 +40,14 @@ class LoginAuthenticationFilter(
 
         val user = usersRepository.findByEmail(loginRequest.email)
             ?: throw AuthenticationServiceException(
-                "User not found with email: ${loginRequest.email}"
+                "이메일 또는 비밀번호가 올바르지 않습니다."
             )
 
         if (!user.isEmailVerified) {
             throw BadCredentialsException("이메일 인증이 필요합니다.")
         }
 
-        if (user.password != passwordEncoder.encode(loginRequest.password)) {
+        if (!passwordEncoder.matches(loginRequest.password, user.password)) {
             throw BadCredentialsException("이메일 또는 비밀번호가 올바르지 않습니다.")
         }
 
@@ -71,7 +72,13 @@ class LoginAuthenticationFilter(
             throw AuthenticationServiceException("Request or Response cannot be null")
         }
 
-        super.successfulAuthentication(request, response, chain, authResult)
+        SecurityContextHolder.getContext().authentication = authResult
+
+        val session = request.getSession(true)
+        session.setAttribute(
+            "SPRING_SECURITY_CONTEXT",
+            SecurityContextHolder.getContext()
+        )
 
         val userPrincipal = authResult.principal as CustomUserPrincipal
         val responseBody = mapOf(

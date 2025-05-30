@@ -63,9 +63,6 @@ class SecurityConfig(
             objectMapper = objectMapper
         ).apply {
             setAuthenticationManager(authenticationManager())
-            setRequiresAuthenticationRequestMatcher { request ->
-                request.servletPath == "/api/users/v1/login" && request.method == "POST"
-            }
         }
     }
 
@@ -79,9 +76,6 @@ class SecurityConfig(
             objectMapper
         ).apply {
             setAuthenticationManager(authenticationManager())
-            setRequiresAuthenticationRequestMatcher { request ->
-                request.servletPath == "/api/users/v1/register" && request.method == "POST"
-            }
         }
     }
 
@@ -135,6 +129,11 @@ class SecurityConfig(
                 registerAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter::class.java
             )
+            .logout { logout ->
+                logout
+                    .logoutUrl("/api/users/v1/logout")
+                    .invalidateHttpSession(true)
+            }
             .oauth2Login { oauth2 ->
                 oauth2
                     .successHandler(oauth2SuccessHandler)
