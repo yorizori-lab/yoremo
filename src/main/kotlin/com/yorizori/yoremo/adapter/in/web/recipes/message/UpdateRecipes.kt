@@ -21,10 +21,12 @@ abstract class UpdateRecipes {
         val servingSize: Int? = null,
         val difficulty: Recipes.Difficulty? = null,
         val imageUrl: String? = null,
-        val tags: List<String>? = null
+        val tags: List<String>? = null,
+        val caloriesPer100g: Long? = null
     )
 
     data class Response(
-        val recipeId: Long
+        val recipeId: Long,
+        val foodId: Long
     )
 }
