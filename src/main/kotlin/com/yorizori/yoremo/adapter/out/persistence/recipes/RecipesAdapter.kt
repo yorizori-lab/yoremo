@@ -19,16 +19,16 @@ class RecipesAdapter(
     fun search(command: RecipesSearchCommand, pageable: Pageable): Page<Recipes> {
         val content = queryFactory
             .selectFrom(recipes)
-            .join(recipes.categoryType, QCategories(Recipes::categoryType.name)).fetchJoin()
-            .join(
+            .leftJoin(recipes.categoryType, QCategories(Recipes::categoryType.name)).fetchJoin()
+            .leftJoin(
                 recipes.categorySituation,
                 QCategories(Recipes::categorySituation.name)
             ).fetchJoin()
-            .join(
+            .leftJoin(
                 recipes.categoryIngredient,
                 QCategories(Recipes::categoryIngredient.name)
             ).fetchJoin()
-            .join(recipes.categoryMethod, QCategories(Recipes::categoryMethod.name)).fetchJoin()
+            .leftJoin(recipes.categoryMethod, QCategories(Recipes::categoryMethod.name)).fetchJoin()
             .where(*buildConditions(command).toTypedArray())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())

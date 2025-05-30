@@ -3,7 +3,7 @@ package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import java.time.Instant
 
-class GetRecipes {
+abstract class GetRecipes {
 
     data class PathVariable(val id: Long)
 

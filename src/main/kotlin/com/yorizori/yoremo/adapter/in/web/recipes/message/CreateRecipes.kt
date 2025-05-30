@@ -2,7 +2,7 @@ package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 
-class CreateRecipes {
+abstract class CreateRecipes {
     data class Request(
         val title: String,
         val description: String? = null,
@@ -18,10 +18,12 @@ class CreateRecipes {
         val servingSize: Int? = null,
         val difficulty: Recipes.Difficulty? = null,
         val imageUrl: String? = null,
-        val tags: List<String>? = null
+        val tags: List<String>? = null,
+        val caloriesPer100g: Long? = null
     )
 
     data class Response(
-        val recipeId: Long
+        val recipeId: Long,
+        val foodId: Long
     )
 }
