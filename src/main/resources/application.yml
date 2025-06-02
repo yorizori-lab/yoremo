@@ -98,6 +98,11 @@ spring:
         options:
           model: gpt-3.5-turbo
 
+server:
+  servlet:
+    session:
+      timeout: 30m
+
 logging:
   level:
     org.springframework.web: DEBUG

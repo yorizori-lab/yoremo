@@ -2,7 +2,6 @@ package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
-import com.yorizori.yoremo.domain.foods.port.FoodsRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -13,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException
 class UpdateRecipesService(
     private val recipesRepository: RecipesRepository,
     private val categoriesRepository: CategoriesRepository,
-    private val foodsRepository: FoodsRepository,
     private val recipesEmbeddingService: RecipesEmbeddingService
 ) {
     @Transactional
@@ -23,8 +21,6 @@ class UpdateRecipesService(
                 HttpStatus.NOT_FOUND,
                 "Recipe not found with id: $id"
             )
-
-        val existingFoods = foodsRepository.findByRecipeId(id)
 
         val categories = categoriesRepository.findByIdIn(
             listOfNotNull(
@@ -58,18 +54,11 @@ class UpdateRecipesService(
 
         val savedRecipes = recipesRepository.save(updatedRecipe)
 
-        val updatedFoods = existingFoods.copy(
-            caloriesPer100g = request.caloriesPer100g
-        )
-
-        val savedFoods = foodsRepository.save(updatedFoods)
-
         // 업데이트된 레시피를 임베딩 처리
         recipesEmbeddingService.embedSingleRecipe(savedRecipes)
 
         return UpdateRecipes.Response(
-            recipeId = savedRecipes.recipeId!!,
-            foodId = savedFoods.foodId!!
+            recipeId = savedRecipes.recipeId!!
         )
     }
 }
