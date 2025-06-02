@@ -7,8 +7,10 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.context.SecurityContextRepository
 
 class YoremoAuthenticationFilter(
+    securityContextRepository: SecurityContextRepository,
     private val authenticationManager: AuthenticationManager,
     private val objectMapper: ObjectMapper
 ) : UsernamePasswordAuthenticationFilter() {
@@ -19,7 +21,9 @@ class YoremoAuthenticationFilter(
 
     init {
         setFilterProcessesUrl(AUTHENTICATION_ENTRY_POINT)
-        setAuthenticationSuccessHandler(YoremoAuthenticationSuccessHandler())
+        setAuthenticationSuccessHandler(
+            YoremoAuthenticationSuccessHandler(securityContextRepository)
+        )
         setAuthenticationFailureHandler(YoremoAuthenticationFailureHandler())
     }
 

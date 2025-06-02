@@ -18,7 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.intercept.AuthorizationFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository
+import org.springframework.security.web.context.SecurityContextRepository
 import org.springframework.web.cors.CorsConfigurationSource
+
 
 @Configuration
 @EnableWebSecurity
@@ -40,12 +43,18 @@ class SecurityConfig(
     }
 
     @Bean
+    fun securityContextRepository(): SecurityContextRepository {
+        return HttpSessionSecurityContextRepository()
+    }
+
+    @Bean
     fun securityFilterChain(
         http: HttpSecurity,
         environment: Environment,
         corsConfigurationSource: CorsConfigurationSource,
         yoremoUserDetailsService: YoremoUserDetailsService,
-        authenticationManager: AuthenticationManager
+        authenticationManager: AuthenticationManager,
+        securityContextRepository: SecurityContextRepository
     ): SecurityFilterChain {
         val http = http
             .cors { cors ->
@@ -54,13 +63,10 @@ class SecurityConfig(
             .csrf { it.disable() }
             .formLogin { it.disable() }
             .httpBasic { it.disable() }
-            .securityContext { securityContext ->
-                securityContext.requireExplicitSave(false)
-            }
             .sessionManagement { session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                session.maximumSessions(1)
-                session.sessionFixation().migrateSession()
+                session
+                    .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                    .maximumSessions(1)
             }
             .authorizeHttpRequests { auth ->
                 auth
@@ -73,9 +79,21 @@ class SecurityConfig(
                     .requestMatchers("/ping").permitAll()
                     .anyRequest().authenticated()
             }
+            .logout {
+                it
+                    .logoutUrl("/api/users/v1/logout")
+                    .logoutSuccessHandler { request, response, authentication ->
+                        request.session.invalidate()
+                        response.status = 200
+                    }
+            }
             .userDetailsService(yoremoUserDetailsService)
             .addFilterBefore(
-                YoremoAuthenticationFilter(authenticationManager, objectMapper),
+                YoremoAuthenticationFilter(
+                    securityContextRepository,
+                    authenticationManager,
+                    objectMapper
+                ),
                 UsernamePasswordAuthenticationFilter::class.java
             )
 
