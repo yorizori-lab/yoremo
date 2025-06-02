@@ -1,7 +1,7 @@
 package com.yorizori.yoremo.domain.users.service
 
 import com.yorizori.yoremo.adapter.`in`.web.users.message.Register
-import com.yorizori.yoremo.adapter.out.redis.RedisUtils
+import com.yorizori.yoremo.adapter.out.redis.email.RedisVerificationEmailRepository
 import com.yorizori.yoremo.domain.users.entity.Users
 import com.yorizori.yoremo.domain.users.port.EmailSender
 import com.yorizori.yoremo.domain.users.port.UsersRepository
@@ -13,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional
 class RegisterService(
     private val usersRepository: UsersRepository,
     private val emailSender: EmailSender,
-    private val redisUtils: RedisUtils,
+    private val redisVerificationEmailRepository: RedisVerificationEmailRepository,
     private val passwordEncoder: PasswordEncoder
 ) {
 
     @Transactional
     fun register(request: Register.Request): Register.Response {
-        if (!redisUtils.isEmailVerified(request.email)) {
+        if (!redisVerificationEmailRepository.isEmailVerified(request.email)) {
             throw IllegalArgumentException("Email is not verified")
         }
 
@@ -36,7 +36,7 @@ class RegisterService(
 
         val savedUser = usersRepository.save(user)
 
-        redisUtils.deleteEmailVerified(request.email)
+        redisVerificationEmailRepository.deleteEmailVerified(request.email)
 
         try {
             emailSender.sendWelcomeEmail(user.email)

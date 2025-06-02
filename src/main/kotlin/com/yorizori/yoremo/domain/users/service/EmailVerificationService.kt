@@ -2,15 +2,18 @@ package com.yorizori.yoremo.domain.users.service
 
 import com.yorizori.yoremo.adapter.`in`.web.users.message.SendVerification
 import com.yorizori.yoremo.adapter.`in`.web.users.message.VerifyEmail
-import com.yorizori.yoremo.adapter.out.redis.RedisUtils
+import com.yorizori.yoremo.adapter.out.redis.email.RedisVerificationEmailRepository
 import com.yorizori.yoremo.domain.users.port.EmailSender
 import org.springframework.stereotype.Service
+import java.time.Duration
 
 @Service
 class EmailVerificationService(
-    private val redisUtils: RedisUtils,
+    private val redisVerificationEmailRepository: RedisVerificationEmailRepository,
     private val emailSender: EmailSender
 ) {
+
+    private val duration: Duration = Duration.ofMinutes(5)
 
     fun sendVerificationCode(
         request: SendVerification.Request
@@ -18,7 +21,7 @@ class EmailVerificationService(
         return try {
             val code = String.format("%06d", (0..999999).random())
 
-            redisUtils.setEmailCode(request.email, code)
+            redisVerificationEmailRepository.setEmailCode(request.email, code, duration)
 
             emailSender.sendVerificationEmail(request.email, code)
 
@@ -35,11 +38,11 @@ class EmailVerificationService(
     fun verifyCode(
         request: VerifyEmail.Request
     ): VerifyEmail.Response {
-        val storedCode = redisUtils.getEmailCode(request.email)
+        val storedCode = redisVerificationEmailRepository.getEmailCode(request.email)
 
         return if (storedCode == request.code) {
-            redisUtils.deleteEmailCode(request.email)
-            redisUtils.setEmailVerified(request.email)
+            redisVerificationEmailRepository.deleteEmailCode(request.email)
+            redisVerificationEmailRepository.setEmailVerified(request.email, duration)
             VerifyEmail.Response(
                 success = true
             )
