@@ -11,7 +11,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "foods")
-data class Foods (
+data class Foods(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val foodId: Long? = null,
@@ -27,6 +27,6 @@ data class Foods (
 ) : BaseEntity() {
     enum class FoodType(val description: String) {
         BASIC("기본"),
-        RECIPE("레시피"),
+        RECIPE("레시피")
     }
 }

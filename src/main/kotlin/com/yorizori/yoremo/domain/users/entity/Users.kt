@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.Instant
 
@@ -29,17 +28,24 @@ data class Users(
     @Enumerated(EnumType.STRING)
     val role: Role = Role.USER,
 
-    val lastLoginAt: Instant? = null,
+    @Enumerated(EnumType.STRING)
+    val provider: Provider = Provider.LOCAL,
 
-    val isEmailVerified: Boolean = false,
+    val providerId: String? = null,
 
-    @OneToMany(mappedBy = "userId")
-    var socialAccounts: MutableList<SocialAccounts> = mutableListOf()
+    val lastLoginAt: Instant? = null
 
 ) : BaseEntity() {
 
     enum class Role(val description: String) {
-        USER("사용자"),
-        ADMIN("관리자")
+        USER("일반 사용자"),
+        ADMIN("관리자");
+    }
+
+    enum class Provider(val description: String) {
+        LOCAL("로컬 사용자"),
+        GOOGLE("구글 사용자"),
+        KAKAO("카카오 사용자"),
+        NAVER("네이버 사용자")
     }
 }

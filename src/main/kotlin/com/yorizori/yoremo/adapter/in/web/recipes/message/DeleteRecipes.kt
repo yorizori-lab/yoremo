@@ -5,7 +5,6 @@ abstract class DeleteRecipes {
     data class PathVariable(val id: Long)
 
     data class Response(
-        val recipeId: Long,
-        val foodId: Long
+        val recipeId: Long
     )
 }

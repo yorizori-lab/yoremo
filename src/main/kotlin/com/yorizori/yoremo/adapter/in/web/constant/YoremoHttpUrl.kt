@@ -19,22 +19,4 @@ class YoremoHttpUrl(
             .build()
             .toUriString()
     }
-
-    fun emailVerificationUrl(token: String, email: String): String {
-        return UriComponentsBuilder
-            .fromUriString("$frontendBaseUrl/auth/verify-email")
-            .queryParam("token", token)
-            .queryParam("email", email)
-            .build()
-            .toUriString()
-    }
-
-    fun passwordResetUrl(token: String, email: String): String {
-        return UriComponentsBuilder
-            .fromUriString("$frontendBaseUrl/auth/reset-password")
-            .queryParam("token", token)
-            .queryParam("email", email)
-            .build()
-            .toUriString()
-    }
 }

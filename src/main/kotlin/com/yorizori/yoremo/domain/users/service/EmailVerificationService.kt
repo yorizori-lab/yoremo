@@ -1,51 +1,55 @@
 package com.yorizori.yoremo.domain.users.service
 
+import com.yorizori.yoremo.adapter.`in`.web.users.message.SendVerification
 import com.yorizori.yoremo.adapter.`in`.web.users.message.VerifyEmail
-import com.yorizori.yoremo.adapter.out.redis.RedisTokenService
+import com.yorizori.yoremo.adapter.out.redis.email.RedisVerificationEmailRepository
 import com.yorizori.yoremo.domain.users.port.EmailSender
-import com.yorizori.yoremo.domain.users.port.UsersRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
+import java.time.Duration
 
 @Service
 class EmailVerificationService(
-    private val usersRepository: UsersRepository,
-    private val redisTokenService: RedisTokenService,
+    private val redisVerificationEmailRepository: RedisVerificationEmailRepository,
     private val emailSender: EmailSender
 ) {
-    @Transactional
-    fun verifyEmail(request: VerifyEmail.Request): VerifyEmail.Response {
-        val user = usersRepository.findByEmail(request.email)
-            ?: throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "존재하지 않는 사용자입니다."
-            )
 
-        if (user.isEmailVerified) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "이미 인증된 계정입니다."
+    private val duration: Duration = Duration.ofMinutes(5)
+
+    fun sendVerificationCode(
+        request: SendVerification.Request
+    ): SendVerification.Response {
+        return try {
+            val code = String.format("%06d", (0..999999).random())
+
+            redisVerificationEmailRepository.setEmailCode(request.email, code, duration)
+
+            emailSender.sendVerificationEmail(request.email, code)
+
+            SendVerification.Response(
+                success = true
+            )
+        } catch (e: Exception) {
+            SendVerification.Response(
+                success = false
             )
         }
+    }
 
-        if (!redisTokenService.verifyToken(request.email, request.token)) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "토큰이 만료되었습니다. 다시 인증을 시도해주세요."
+    fun verifyCode(
+        request: VerifyEmail.Request
+    ): VerifyEmail.Response {
+        val storedCode = redisVerificationEmailRepository.getEmailCode(request.email)
+
+        return if (storedCode == request.code) {
+            redisVerificationEmailRepository.deleteEmailCode(request.email)
+            redisVerificationEmailRepository.setEmailVerified(request.email, duration)
+            VerifyEmail.Response(
+                success = true
+            )
+        } else {
+            VerifyEmail.Response(
+                success = false
             )
         }
-
-        val verifiedUser = user.copy(isEmailVerified = true)
-        usersRepository.save(verifiedUser)
-
-        redisTokenService.deleteToken(request.email)
-
-        emailSender.sendWelcomeEmail(verifiedUser.email, verifiedUser.name)
-
-        return VerifyEmail.Response(
-            email = verifiedUser.email
-        )
     }
 }

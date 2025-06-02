@@ -26,7 +26,6 @@ abstract class UpdateRecipes {
     )
 
     data class Response(
-        val recipeId: Long,
-        val foodId: Long
+        val recipeId: Long
     )
 }
