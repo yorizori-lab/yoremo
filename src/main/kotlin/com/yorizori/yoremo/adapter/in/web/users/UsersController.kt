@@ -5,8 +5,6 @@ import com.yorizori.yoremo.adapter.`in`.web.users.message.SendVerification
 import com.yorizori.yoremo.adapter.`in`.web.users.message.VerifyEmail
 import com.yorizori.yoremo.domain.users.service.EmailVerificationService
 import com.yorizori.yoremo.domain.users.service.RegisterService
-import jakarta.servlet.http.HttpServletRequest
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -38,13 +36,5 @@ class UsersController(
         @RequestBody request: Register.Request
     ): Register.Response {
         return registerService.register(request)
-    }
-
-    @PostMapping("/logout")
-    fun logout(
-        request: HttpServletRequest
-    ) {
-        request.session.invalidate()
-        SecurityContextHolder.clearContext()
     }
 }
