@@ -36,7 +36,7 @@ class YoremoAuthenticationFilter(
         return authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 yoremoLoginRequestRequest.email,
-                yoremoLoginRequestRequest.password,
+                yoremoLoginRequestRequest.password
             )
         )
     }

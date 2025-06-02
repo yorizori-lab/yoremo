@@ -8,7 +8,7 @@ class YoremoAuthentication(
     private val email: String,
     private val password: String,
     val userId: Long,
-    val authority: GrantedAuthority,
+    val authority: GrantedAuthority
 ) : UserDetails, AuthenticatedPrincipal {
 
     override fun getAuthorities(): Collection<GrantedAuthority?>? = listOf(authority)
