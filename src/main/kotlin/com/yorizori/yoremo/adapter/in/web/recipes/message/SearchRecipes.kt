@@ -3,7 +3,7 @@ package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import java.time.Instant
 
-class SearchRecipes {
+abstract class SearchRecipes {
     data class Request(
         val categoryTypeId: Long? = null,
         val categorySituationId: Long? = null,

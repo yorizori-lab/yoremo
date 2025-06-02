@@ -1,23 +1,31 @@
 package com.yorizori.yoremo.domain.recipes.service
 
-import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
+import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
-import com.yorizori.yoremo.domain.foods.entity.Foods
 import com.yorizori.yoremo.domain.foods.port.FoodsRepository
-import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
 
 @Service
-class CreateRecipesService(
+class UpdateRecipesService(
     private val recipesRepository: RecipesRepository,
     private val categoriesRepository: CategoriesRepository,
     private val foodsRepository: FoodsRepository,
     private val recipesEmbeddingService: RecipesEmbeddingService
 ) {
     @Transactional
-    fun create(request: CreateRecipes.Request): CreateRecipes.Response {
+    fun update(id: Long, request: UpdateRecipes.Request): UpdateRecipes.Response {
+        val existingRecipe = recipesRepository.findById(id)
+            ?: throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Recipe not found with id: $id"
+            )
+
+        val existingFoods = foodsRepository.findByRecipeId(id)
+
         val categories = categoriesRepository.findByIdIn(
             listOfNotNull(
                 request.categoryTypeId,
@@ -29,7 +37,8 @@ class CreateRecipesService(
 
         val categoriesMap = categories.associateBy { it.categoryId }
 
-        val recipes = Recipes(
+        val updatedRecipe = existingRecipe.copy(
+            recipeId = id,
             title = request.title,
             description = request.description,
             ingredients = request.ingredients,
@@ -47,21 +56,18 @@ class CreateRecipesService(
             tags = request.tags
         )
 
-        val savedRecipes = recipesRepository.save(recipes)
+        val savedRecipes = recipesRepository.save(updatedRecipe)
 
-        val foods = Foods(
-            name = request.title,
-            foodType = Foods.FoodType.RECIPE,
-            recipeId = savedRecipes.recipeId,
+        val updatedFoods = existingFoods.copy(
             caloriesPer100g = request.caloriesPer100g
         )
 
-        val savedFoods = foodsRepository.save(foods)
+        val savedFoods = foodsRepository.save(updatedFoods)
 
-        // 저장된 레시피를 임베딩 처리
+        // 업데이트된 레시피를 임베딩 처리
         recipesEmbeddingService.embedSingleRecipe(savedRecipes)
 
-        return CreateRecipes.Response(
+        return UpdateRecipes.Response(
             recipeId = savedRecipes.recipeId!!,
             foodId = savedFoods.foodId!!
         )

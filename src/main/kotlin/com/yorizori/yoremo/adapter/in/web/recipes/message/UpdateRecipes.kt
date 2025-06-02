@@ -2,7 +2,10 @@ package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 
-abstract class CreateRecipes {
+abstract class UpdateRecipes {
+
+    data class PathVariable(val id: Long)
+
     data class Request(
         val title: String,
         val description: String? = null,
