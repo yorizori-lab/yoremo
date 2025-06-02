@@ -1,9 +1,12 @@
-package com.yorizori.yoremo.adapter.`in`.web.config
+package com.yorizori.yoremo.adapter.`in`.web.config.security
 
-import com.yorizori.yoremo.adapter.`in`.web.filter.LoginFilter
-import com.yorizori.yoremo.domain.users.service.LoginService
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.yorizori.yoremo.adapter.`in`.web.config.security.authentication.YoremoAuthenticationFilter
+import com.yorizori.yoremo.adapter.`in`.web.config.security.authentication.YoremoUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -15,7 +18,9 @@ import org.springframework.web.cors.CorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    private val objectMapper: ObjectMapper
+) {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -23,10 +28,18 @@ class SecurityConfig {
     }
 
     @Bean
-    fun filterChain(
+    fun authenticationManager(
+        authenticationConfiguration: AuthenticationConfiguration
+    ): AuthenticationManager {
+        return authenticationConfiguration.authenticationManager
+    }
+
+    @Bean
+    fun securityFilterChain(
         http: HttpSecurity,
         corsConfigurationSource: CorsConfigurationSource,
-        loginService: LoginService
+        yoremoUserDetailsService: YoremoUserDetailsService,
+        authenticationManager: AuthenticationManager
     ): SecurityFilterChain {
         return http
             .cors { cors ->
@@ -54,8 +67,9 @@ class SecurityConfig {
                     .requestMatchers("/ping").permitAll()
                     .anyRequest().authenticated()
             }
+            .userDetailsService(yoremoUserDetailsService)
             .addFilterBefore(
-                LoginFilter(loginService),
+                YoremoAuthenticationFilter(authenticationManager, objectMapper),
                 UsernamePasswordAuthenticationFilter::class.java
             )
             .build()
