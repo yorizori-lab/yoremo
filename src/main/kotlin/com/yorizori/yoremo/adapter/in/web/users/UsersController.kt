@@ -1,59 +1,50 @@
 package com.yorizori.yoremo.adapter.`in`.web.users
 
-import com.yorizori.yoremo.adapter.`in`.web.security.CustomUserPrincipal
-import com.yorizori.yoremo.adapter.`in`.web.users.message.CheckEmail
-import com.yorizori.yoremo.adapter.`in`.web.users.message.GetMe
-import com.yorizori.yoremo.adapter.`in`.web.users.message.ResendVerification
+import com.yorizori.yoremo.adapter.`in`.web.users.message.Register
+import com.yorizori.yoremo.adapter.`in`.web.users.message.SendVerification
 import com.yorizori.yoremo.adapter.`in`.web.users.message.VerifyEmail
-import com.yorizori.yoremo.domain.users.service.CheckEmailService
 import com.yorizori.yoremo.domain.users.service.EmailVerificationService
-import com.yorizori.yoremo.domain.users.service.GetMeService
-import com.yorizori.yoremo.domain.users.service.ResendVerificationService
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.GetMapping
+import com.yorizori.yoremo.domain.users.service.RegisterService
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users/v1")
 class UsersController(
-    private val checkEmailService: CheckEmailService,
-    private val verifyEmailService: EmailVerificationService,
-    private val resendVerificationService: ResendVerificationService,
-    private val getMeService: GetMeService
+    private val emailVerificationService: EmailVerificationService,
+    private val registerService: RegisterService
 ) {
 
-    @PostMapping("/check-email")
-    fun checkEmail(
-        @RequestBody request: CheckEmail.Request
-    ): CheckEmail.Response {
-        return checkEmailService.checkEmail(request)
+    @PostMapping("/send-verification")
+    fun sendVerification(
+        @RequestBody request: SendVerification.Request
+    ): SendVerification.Response {
+        return emailVerificationService.sendVerificationCode(request)
     }
 
-    @GetMapping("/verify-email")
+    @PostMapping("/verify-email")
     fun verifyEmail(
-        @RequestParam token: String,
-        @RequestParam email: String
+        @RequestBody request: VerifyEmail.Request
     ): VerifyEmail.Response {
-        val request = VerifyEmail.Request(token, email)
-        return verifyEmailService.verifyEmail(request)
+        return emailVerificationService.verifyCode(request)
     }
 
-    @PostMapping("/resend-verification")
-    fun resendVerification(
-        @RequestBody request: ResendVerification.Request
-    ): ResendVerification.Response {
-        return resendVerificationService.resendVerification(request)
+    @PostMapping("/register")
+    fun register(
+        @RequestBody request: Register.Request
+    ): Register.Response {
+        return registerService.register(request)
     }
 
-    @GetMapping("/me")
-    fun getMe(
-        @AuthenticationPrincipal userPrincipal: CustomUserPrincipal
-    ): GetMe.Response {
-        val currentUser = userPrincipal.getUsers()
-        return getMeService.getMe(currentUser)
+    @PostMapping("/logout")
+    fun logout(
+        request: HttpServletRequest
+    ) {
+        request.session.invalidate()
+        SecurityContextHolder.clearContext()
     }
 }
