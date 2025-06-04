@@ -18,7 +18,8 @@ abstract class CreateRecipes {
         val servingSize: Int? = null,
         val difficulty: Recipes.Difficulty? = null,
         val imageUrl: String? = null,
-        val tags: List<String>? = null
+        val tags: List<String>? = null,
+        val caloriesPer100g: Long? = null
     )
 
     data class Response(

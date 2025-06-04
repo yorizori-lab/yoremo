@@ -2,6 +2,7 @@ package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
+import com.yorizori.yoremo.domain.foods.port.FoodsRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -12,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException
 class UpdateRecipesService(
     private val recipesRepository: RecipesRepository,
     private val categoriesRepository: CategoriesRepository,
+    private val foodsRepository: FoodsRepository,
     private val recipesEmbeddingService: RecipesEmbeddingService
 ) {
     @Transactional
@@ -53,6 +55,15 @@ class UpdateRecipesService(
         )
 
         val savedRecipes = recipesRepository.save(updatedRecipe)
+
+        val existingFoods = foodsRepository.findByRecipeId(id)
+
+        val updatedFoods = existingFoods.copy(
+            name = request.title,
+            caloriesPer100g = request.caloriesPer100g
+        )
+
+        foodsRepository.save(updatedFoods)
 
         // 업데이트된 레시피를 임베딩 처리
         recipesEmbeddingService.embedSingleRecipe(savedRecipes)

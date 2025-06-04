@@ -16,8 +16,8 @@ class FoodsRepository(
         return foodsJpaRepository.save(foods)
     }
 
-    fun deleteById(id: Long) {
-        return foodsJpaRepository.deleteById(id)
+    fun deleteByRecipeId(recipeId: Long) {
+        return foodsJpaRepository.deleteByRecipeId(recipeId)
     }
 
     fun findByRecipeId(recipeId: Long): Foods {
