@@ -13,8 +13,7 @@ import org.springframework.web.server.ResponseStatusException
 class UpdateRecipesService(
     private val recipesRepository: RecipesRepository,
     private val categoriesRepository: CategoriesRepository,
-    private val foodsRepository: FoodsRepository,
-    private val recipesEmbeddingService: RecipesEmbeddingService
+    private val foodsRepository: FoodsRepository
 ) {
     @Transactional
     fun update(id: Long, request: UpdateRecipes.Request): UpdateRecipes.Response {
@@ -64,9 +63,6 @@ class UpdateRecipesService(
         )
 
         foodsRepository.save(updatedFoods)
-
-        // 업데이트된 레시피를 임베딩 처리
-        recipesEmbeddingService.embedSingleRecipe(savedRecipes)
 
         return UpdateRecipes.Response(
             recipeId = savedRecipes.recipeId!!

@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 class CreateRecipesService(
     private val recipesRepository: RecipesRepository,
     private val categoriesRepository: CategoriesRepository,
-    private val foodsRepository: FoodsRepository,
-    private val recipesEmbeddingService: RecipesEmbeddingService
+    private val foodsRepository: FoodsRepository
 ) {
     @Transactional
     fun create(request: CreateRecipes.Request): CreateRecipes.Response {
@@ -57,8 +56,6 @@ class CreateRecipesService(
         )
 
         foodsRepository.save(foods)
-
-        recipesEmbeddingService.embedSingleRecipe(savedRecipes)
 
         return CreateRecipes.Response(
             recipeId = savedRecipes.recipeId!!

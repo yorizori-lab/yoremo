@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.DynamicUpdate
+import java.time.Instant
 
 @Entity
 @DynamicUpdate
@@ -25,7 +26,9 @@ data class Foods(
 
     val recipeId: Long? = null,
 
-    val caloriesPer100g: Long? = null
+    val caloriesPer100g: Long? = null,
+
+    val vectorSyncedAt: Instant? = null
 ) : BaseEntity() {
     enum class FoodType(val description: String) {
         BASIC("기본"),
