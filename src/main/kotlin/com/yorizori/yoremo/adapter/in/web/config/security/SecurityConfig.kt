@@ -55,7 +55,7 @@ class SecurityConfig(
         authenticationManager: AuthenticationManager,
         securityContextRepository: SecurityContextRepository
     ): SecurityFilterChain {
-        val http = http
+        val httpSecurity = http
             .cors { cors ->
                 cors.configurationSource(corsConfigurationSource)
             }
@@ -81,7 +81,7 @@ class SecurityConfig(
             .logout {
                 it
                     .logoutUrl("/api/users/v1/logout")
-                    .logoutSuccessHandler { request, response, authentication ->
+                    .logoutSuccessHandler { request, response, _ ->
                         request.session.invalidate()
                         response.status = 200
                     }
@@ -103,6 +103,6 @@ class SecurityConfig(
             )
         }
 
-        return http.build()
+        return httpSecurity.build()
     }
 }
