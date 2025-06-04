@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface FoodsJpaRepository : JpaRepository<Foods, Long> {
     fun findByRecipeId(recipeId: Long): Foods
+    fun deleteByRecipeId(recipeId: Long)
 }

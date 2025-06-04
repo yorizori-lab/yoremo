@@ -25,6 +25,7 @@ abstract class GetRecipes {
         val imageUrl: String?,
         val tags: List<String>?,
         val createdAt: Instant,
-        val updatedAt: Instant
+        val updatedAt: Instant,
+        val caloriesPer100g: Long? = null
     )
 }

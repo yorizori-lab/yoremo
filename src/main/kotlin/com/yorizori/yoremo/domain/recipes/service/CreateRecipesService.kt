@@ -2,6 +2,8 @@ package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
+import com.yorizori.yoremo.domain.foods.entity.Foods
+import com.yorizori.yoremo.domain.foods.port.FoodsRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import org.springframework.stereotype.Service
@@ -11,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 class CreateRecipesService(
     private val recipesRepository: RecipesRepository,
     private val categoriesRepository: CategoriesRepository,
-    private val recipesEmbeddingService: RecipesEmbeddingService
+    private val foodsRepository: FoodsRepository
 ) {
     @Transactional
     fun create(request: CreateRecipes.Request): CreateRecipes.Response {
@@ -46,7 +48,14 @@ class CreateRecipesService(
 
         val savedRecipes = recipesRepository.save(recipes)
 
-        recipesEmbeddingService.embedSingleRecipe(savedRecipes)
+        val foods = Foods(
+            name = request.title,
+            foodType = Foods.FoodType.RECIPE,
+            caloriesPer100g = request.caloriesPer100g,
+            recipeId = savedRecipes.recipeId
+        )
+
+        foodsRepository.save(foods)
 
         return CreateRecipes.Response(
             recipeId = savedRecipes.recipeId!!
