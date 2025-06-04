@@ -10,7 +10,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
 
 @Configuration
-class FoodVectorBatchConfig {
+class FoodVectorBatchConfig(
+    private val jobRepository: JobRepository,
+    private val transactionManager: PlatformTransactionManager
+) {
 
     @Bean
     fun foodVectorSyncJob(
@@ -24,8 +27,6 @@ class FoodVectorBatchConfig {
 
     @Bean
     fun foodVectorSyncStep(
-        jobRepository: JobRepository,
-        transactionManager: PlatformTransactionManager,
         foodVectorSyncTasklet: FoodVectorSyncTasklet
     ): Step {
         return StepBuilder("foodVectorSyncStep", jobRepository)

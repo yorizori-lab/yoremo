@@ -4,6 +4,7 @@ import com.yorizori.yoremo.adapter.out.persistence.foods.FoodsAdapter
 import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesJpaRepository
 import com.yorizori.yoremo.domain.foods.entity.Foods
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
+import org.slf4j.LoggerFactory
 import org.springframework.ai.document.Document
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.VectorStore
@@ -20,6 +21,8 @@ class FoodVectorSyncTasklet(
     private val recipesJpaRepository: RecipesJpaRepository,
     private val vectorStore: VectorStore
 ) : Tasklet {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     private val tokenTextSplitter = TokenTextSplitter()
 
@@ -38,7 +41,7 @@ class FoodVectorSyncTasklet(
                     recipesJpaRepository.findById(it).orElse(null)
                 }
 
-                deleteExistingVector(food.foodId!!)
+                vectorStore.delete(listOf("foodId == '${food.foodId!!}'"))
 
                 val document = createDocument(food, recipe)
                 val tokenizedDocs = tokenTextSplitter.apply(listOf(document))
@@ -50,18 +53,13 @@ class FoodVectorSyncTasklet(
                 foodsAdapter.updateVectorSyncedAtOnly(food.foodId!!, Instant.now())
 
                 successCount++
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                logger.error("Failed to sync vector for food ID: ${food.foodId}", e)
                 failCount++
             }
         }
-        return RepeatStatus.FINISHED
-    }
 
-    private fun deleteExistingVector(foodId: Long) {
-        try {
-            vectorStore.delete(listOf("food_id == '$foodId'"))
-        } catch (_: Exception) {
-        }
+        return RepeatStatus.FINISHED
     }
 
     private fun createDocument(food: Foods, recipe: Recipes?): Document {

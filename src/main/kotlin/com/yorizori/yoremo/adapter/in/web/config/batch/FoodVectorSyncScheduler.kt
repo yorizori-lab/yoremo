@@ -1,6 +1,7 @@
 package com.yorizori.yoremo.adapter.`in`.web.config.batch
 
 import com.yorizori.yoremo.adapter.out.persistence.foods.FoodsAdapter
+import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher
@@ -13,6 +14,8 @@ class FoodVectorSyncScheduler(
     private val foodVectorSyncJob: Job,
     private val foodsAdapter: FoodsAdapter
 ) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(cron = "0 0 2 * * *")
     fun runFoodVectorSync() {
@@ -27,16 +30,8 @@ class FoodVectorSyncScheduler(
                 .toJobParameters()
 
             jobLauncher.run(foodVectorSyncJob, jobParameters)
-        } catch (_: Exception) {
-        }
-    }
-
-    fun runManualSync(): String {
-        return try {
-            runFoodVectorSync()
-            "Manual sync completed"
         } catch (e: Exception) {
-            "Manual sync failed: ${e.message}"
+            logger.error("Failed to run food vector sync", e)
         }
     }
 }
