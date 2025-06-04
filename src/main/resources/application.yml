@@ -98,6 +98,12 @@ spring:
         options:
           model: gpt-3.5-turbo
 
+  batch:
+    jdbc:
+      initialize-schema: never
+    job:
+      enabled: false
+
 server:
   servlet:
     session:
