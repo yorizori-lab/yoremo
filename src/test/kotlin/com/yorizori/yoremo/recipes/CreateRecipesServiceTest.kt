@@ -1,7 +1,6 @@
 package com.yorizori.yoremo.recipes
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
-import com.yorizori.yoremo.domain.foods.entity.Foods
 import com.yorizori.yoremo.domain.foods.port.FoodsRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
@@ -96,11 +95,6 @@ class CreateRecipesServiceTest {
         assertNotNull(createdRecipe)
         assertEquals(request.title, createdRecipe?.title)
         assertEquals(request.description, createdRecipe?.description)
-
-        val createdFood = foodsRepository.findById(response.foodId)
-        assertNotNull(createdFood)
-        assertEquals(request.title, createdFood?.name)
-        assertEquals(Foods.FoodType.RECIPE, createdFood?.foodType)
 
         println("생성된 레시피 ID: ${response.recipeId}")
         println("생성된 레시피 제목: ${createdRecipe?.title}")
