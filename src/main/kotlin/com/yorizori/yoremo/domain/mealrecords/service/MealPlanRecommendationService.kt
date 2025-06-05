@@ -1,5 +1,6 @@
 package com.yorizori.yoremo.domain.mealrecords.service
 
+import com.yorizori.yoremo.adapter.`in`.web.mealrecords.message.MealPlan
 import com.yorizori.yoremo.adapter.`in`.web.mealrecords.message.MealPlanRecommendation
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor
@@ -84,7 +85,7 @@ class MealPlanRecommendationService(
             .call()
             .content()
 
-        val mealPlans = mutableListOf<MealPlanRecommendation.MealPlan>()
+        val mealPlans = mutableListOf<MealPlan>()
 
         response?.lines()
             ?.filter { it.startsWith("Day") && it.contains("|") }
@@ -95,7 +96,7 @@ class MealPlanRecommendationService(
                         val day = parts[0].removePrefix("Day").toInt()
 
                         mealPlans.add(
-                            MealPlanRecommendation.MealPlan(
+                            MealPlan(
                                 day = day,
                                 mealType = parts[1].trim(),
                                 foodName = parts[2].trim(),

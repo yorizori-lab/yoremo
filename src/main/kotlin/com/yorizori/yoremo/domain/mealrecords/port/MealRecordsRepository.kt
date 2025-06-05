@@ -18,6 +18,10 @@ class MealRecordsRepository(
         return mealRecordsJapRepository.save(mealRecords)
     }
 
+    fun saveAll(mealRecords: List<MealRecords>): List<MealRecords> {
+        return mealRecordsJapRepository.saveAll(mealRecords)
+    }
+
     fun deleteById(id: Long) {
         mealRecordsJapRepository.deleteById(id)
     }
