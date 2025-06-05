@@ -96,7 +96,7 @@ spring:
           model: text-embedding-3-small
       chat:
         options:
-          model: gpt-3.5-turbo
+          model: gpt-4o-mini
 
   batch:
     jdbc:
