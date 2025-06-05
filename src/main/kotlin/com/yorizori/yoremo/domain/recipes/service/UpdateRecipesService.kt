@@ -55,11 +55,10 @@ class UpdateRecipesService(
 
         val savedRecipes = recipesRepository.save(updatedRecipe)
 
-        val existingFoods = foodsRepository.findByRecipeId(id)
-
-        val updatedFoods = existingFoods.copy(
+        val updatedFoods = existingRecipe.food!!.copy(
             name = request.title,
-            caloriesPer100g = request.caloriesPer100g
+            caloriesPer100g = request.caloriesPer100g,
+            recipe = savedRecipes
         )
 
         foodsRepository.save(updatedFoods)

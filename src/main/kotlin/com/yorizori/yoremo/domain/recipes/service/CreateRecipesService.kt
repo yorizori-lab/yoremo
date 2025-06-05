@@ -51,8 +51,8 @@ class CreateRecipesService(
         val foods = Foods(
             name = request.title,
             foodType = Foods.FoodType.RECIPE,
+            recipe = savedRecipes,
             caloriesPer100g = request.caloriesPer100g,
-            recipeId = savedRecipes.recipeId
         )
 
         foodsRepository.save(foods)

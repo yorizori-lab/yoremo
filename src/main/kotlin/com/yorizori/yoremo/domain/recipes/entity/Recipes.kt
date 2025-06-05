@@ -2,6 +2,7 @@ package com.yorizori.yoremo.domain.recipes.entity
 
 import com.yorizori.yoremo.domain.categories.entity.Categories
 import com.yorizori.yoremo.domain.common.BaseEntity
+import com.yorizori.yoremo.domain.foods.entity.Foods
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.JdbcTypeCode
@@ -70,7 +72,10 @@ data class Recipes(
 
     @Column(name = "tags", columnDefinition = "_text")
     @JdbcTypeCode(SqlTypes.ARRAY)
-    var tags: List<String>? = null
+    var tags: List<String>? = null,
+
+    @OneToOne(mappedBy = "recipe", fetch = FetchType.LAZY)
+    val food: Foods? = null
 ) : BaseEntity() {
 
     data class Ingredient(
