@@ -2,7 +2,6 @@ package com.yorizori.yoremo.domain.foods.entity
 
 import com.yorizori.yoremo.domain.common.BaseEntity
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -24,16 +23,16 @@ data class Foods(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val foodId: Long? = null,
 
-    val name: String,
+    var name: String,
 
     @Enumerated(EnumType.STRING)
     val foodType: FoodType = FoodType.BASIC,
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     val recipe: Recipes? = null,
 
-    val caloriesPer100g: Long? = null,
+    var caloriesPer100g: Long? = null,
 
     val vectorSyncedAt: Instant? = null
 ) : BaseEntity() {

@@ -37,13 +37,9 @@ class FoodVectorSyncTasklet(
 
         needSyncFoods.forEach { food ->
             try {
-                val recipe = food.recipeId?.let {
-                    recipesJpaRepository.findById(it).orElse(null)
-                }
-
                 vectorStore.delete(listOf("foodId == '${food.foodId!!}'"))
 
-                val document = createDocument(food, recipe)
+                val document = createDocument(food, food.recipe)
                 val tokenizedDocs = tokenTextSplitter.apply(listOf(document))
 
                 if (!tokenizedDocs.isNullOrEmpty()) {

@@ -15,12 +15,4 @@ class FoodsRepository(
     fun save(foods: Foods): Foods {
         return foodsJpaRepository.save(foods)
     }
-
-    fun deleteByRecipeId(recipeId: Long) {
-        return foodsJpaRepository.deleteByRecipeId(recipeId)
-    }
-
-    fun findByRecipeId(recipeId: Long): Foods {
-        return foodsJpaRepository.findByRecipeId(recipeId)
-    }
 }
