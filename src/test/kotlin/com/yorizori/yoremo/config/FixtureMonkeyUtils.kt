@@ -12,6 +12,5 @@ object FixtureMonkeyUtils {
 
     inline fun <reified T> giveMeOne(): T = fixtureMonkey.giveMeOne(T::class.java)
 
-    inline fun <reified T> giveMeKotlinBuilders() =
-        fixtureMonkey.giveMeKotlinBuilder(T::class.java)
+    inline fun <reified T> giveMeKotlinBuilder() = fixtureMonkey.giveMeKotlinBuilder<T>()
 }
