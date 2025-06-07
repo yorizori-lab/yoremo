@@ -1,7 +1,6 @@
 package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
-import com.yorizori.yoremo.domain.foods.port.FoodsRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -10,8 +9,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class GetRecipesService(
-    private val recipesRepository: RecipesRepository,
-    private val foodsRepository: FoodsRepository
+    private val recipesRepository: RecipesRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -21,8 +19,6 @@ class GetRecipesService(
                 HttpStatus.NOT_FOUND,
                 "recipes not found with id: $id"
             )
-
-        val foods = foodsRepository.findByRecipeId(id)
 
         return GetRecipes.Response(
             recipeId = recipes.recipeId!!,
@@ -43,7 +39,7 @@ class GetRecipesService(
             tags = recipes.tags,
             createdAt = recipes.createdAt,
             updatedAt = recipes.updatedAt,
-            caloriesPer100g = foods.caloriesPer100g
+            caloriesPer100g = recipes.food?.caloriesPer100g
         )
     }
 }

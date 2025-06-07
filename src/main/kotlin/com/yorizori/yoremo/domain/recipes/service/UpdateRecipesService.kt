@@ -2,7 +2,6 @@ package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
-import com.yorizori.yoremo.domain.foods.port.FoodsRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -12,8 +11,7 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class UpdateRecipesService(
     private val recipesRepository: RecipesRepository,
-    private val categoriesRepository: CategoriesRepository,
-    private val foodsRepository: FoodsRepository
+    private val categoriesRepository: CategoriesRepository
 ) {
     @Transactional
     fun update(id: Long, request: UpdateRecipes.Request): UpdateRecipes.Response {
@@ -50,19 +48,14 @@ class UpdateRecipesService(
             servingSize = request.servingSize,
             difficulty = request.difficulty,
             imageUrl = request.imageUrl,
-            tags = request.tags
+            tags = request.tags,
+            food = existingRecipe.food.apply {
+                this?.name = request.title
+                this?.caloriesPer100g = request.caloriesPer100g
+            }
         )
 
         val savedRecipes = recipesRepository.save(updatedRecipe)
-
-        val existingFoods = foodsRepository.findByRecipeId(id)
-
-        val updatedFoods = existingFoods.copy(
-            name = request.title,
-            caloriesPer100g = request.caloriesPer100g
-        )
-
-        foodsRepository.save(updatedFoods)
 
         return UpdateRecipes.Response(
             recipeId = savedRecipes.recipeId!!
