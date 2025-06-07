@@ -52,7 +52,7 @@ class CreateRecipesService(
             name = request.title,
             foodType = Foods.FoodType.RECIPE,
             recipe = savedRecipes,
-            caloriesPer100g = request.caloriesPer100g,
+            caloriesPer100g = request.caloriesPer100g
         )
 
         foodsRepository.save(foods)

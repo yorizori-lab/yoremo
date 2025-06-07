@@ -3,7 +3,4 @@ package com.yorizori.yoremo.adapter.out.persistence.foods
 import com.yorizori.yoremo.domain.foods.entity.Foods
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface FoodsJpaRepository : JpaRepository<Foods, Long> {
-    fun findByRecipeId(recipeId: Long): Foods
-    fun deleteByRecipeId(recipeId: Long)
-}
+interface FoodsJpaRepository : JpaRepository<Foods, Long>
