@@ -24,6 +24,7 @@ class ListCategoriesServiceTest {
         every {
             categoriesRepository.findAllByCategoryType(request.categoryType)
         } returns giveMeKotlinBuilder<Categories>()
+            .setNotNull(Categories::categoryId)
             .set(Categories::categoryType.name, request.categoryType)
             .sampleList(2)
 
