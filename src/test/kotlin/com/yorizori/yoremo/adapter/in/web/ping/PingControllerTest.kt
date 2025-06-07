@@ -1,30 +1,29 @@
 package com.yorizori.yoremo.adapter.`in`.web.ping
 
-import org.assertj.core.api.Assertions.assertThat
+import com.yorizori.yoremo.config.TestSecurityConfig
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.HttpStatus
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(controllers = [PingController::class])
+@Import(TestSecurityConfig::class)
 class PingControllerTest {
 
-    @LocalServerPort
-    private var port: Int = 0
-
     @Autowired
-    private lateinit var restTemplate: TestRestTemplate
+    private lateinit var mockMvc: MockMvc
 
     @Test
     fun ping() {
-        val response = restTemplate.getForEntity(
-            "http://localhost:$port/ping",
-            String::class.java
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .get("/ping")
         )
-
-        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body).isEqualTo("pong")
+            .andExpect(status().isOk)
+            .andExpect(content().string("pong"))
     }
 }
