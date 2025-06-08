@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.config
+package com.yorizori.yoremo.test
 
 import com.navercorp.fixturemonkey.FixtureMonkey
 import com.navercorp.fixturemonkey.kotlin.KotlinPlugin
