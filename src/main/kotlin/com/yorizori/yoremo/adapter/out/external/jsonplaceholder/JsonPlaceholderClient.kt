@@ -1,39 +1,13 @@
 package com.yorizori.yoremo.adapter.out.external.jsonplaceholder
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.yorizori.yoremo.adapter.out.external.jsonplaceholder.message.GetPost
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
-import org.springframework.web.util.UriComponentsBuilder
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.service.annotation.GetExchange
+import org.springframework.web.service.annotation.HttpExchange
 
-/** [jsonPlaceholder](https://jsonplaceholder.typicode.com) */
-@Component
-class JsonPlaceholderClient(
-    @Value("\${adapter.http.json-placeholder.base-url}")
-    private val baseUrl: String,
-    private val httpClient: HttpClient,
-    private val objectMapper: ObjectMapper
-) {
-    private val uriBuilder = UriComponentsBuilder.fromUriString(baseUrl)
+@HttpExchange
+interface JsonPlaceholderClient {
 
-    fun getPost(request: GetPost.PathVariable): GetPost.Response {
-        val response = httpClient.send(
-            HttpRequest.newBuilder()
-                .uri(
-                    uriBuilder
-                        .path("/posts/{postId}")
-                        .buildAndExpand(request.postId)
-                        .toUri()
-                )
-                .GET()
-                .build(),
-            HttpResponse.BodyHandlers.ofString()
-        )
-
-        return objectMapper.readValue<GetPost.Response>(response.body())
-    }
+    @GetExchange("/posts/{postId}")
+    fun getPost(@PathVariable postId: Long): GetPost.Response
 }
