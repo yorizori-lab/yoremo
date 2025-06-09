@@ -1,0 +1,50 @@
+[[recipes]]
+=== 레시피 목록 조회
+
+==== HTTP Request
+include::{snippets}/recipes-list/http-request.adoc[]
+include::{snippets}/recipes-list/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipes-list/http-response.adoc[]
+include::{snippets}/recipes-list/response-fields.adoc[]
+
+=== 레시피 ID 조회
+
+==== HTTP Request
+include::{snippets}/recipes-get/http-request.adoc[]
+include::{snippets}/recipes-get/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipes-get/http-response.adoc[]
+include::{snippets}/recipes-get/response-fields.adoc[]
+
+=== 레시피 생성
+
+==== HTTP Request
+include::{snippets}/recipes-create/http-request.adoc[]
+include::{snippets}/recipes-create/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipes-create/http-response.adoc[]
+include::{snippets}/recipes-create/response-fields.adoc[]
+
+=== 레시피 수정
+
+==== HTTP Request
+include::{snippets}/recipes-update/http-request.adoc[]
+include::{snippets}/recipes-update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipes-update/http-response.adoc[]
+include::{snippets}/recipes-update/response-fields.adoc[]
+
+=== 레시피 삭제
+
+==== HTTP Request
+include::{snippets}/recipes-delete/http-request.adoc[]
+include::{snippets}/recipes-delete/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipes-delete/http-response.adoc[]
+include::{snippets}/recipes-delete/response-fields.adoc[]
