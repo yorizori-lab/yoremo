@@ -1,10 +1,10 @@
 package com.yorizori.yoremo.domain.categories.service
 
 import com.yorizori.yoremo.adapter.`in`.web.categories.message.ListCategories
-import com.yorizori.yoremo.config.FixtureMonkeyUtils.giveMeKotlinBuilder
-import com.yorizori.yoremo.config.FixtureMonkeyUtils.giveMeOne
 import com.yorizori.yoremo.domain.categories.entity.Categories
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
+import com.yorizori.yoremo.test.FixtureMonkeyUtils.giveMeKotlinBuilder
+import com.yorizori.yoremo.test.FixtureMonkeyUtils.giveMeOne
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

@@ -7,6 +7,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     id("org.jlleitschuh.gradle.ktlint-idea") version "11.6.1"
     kotlin("kapt") version "1.9.25"
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
 group = "com.yorizori"
@@ -20,6 +21,11 @@ java {
 
 repositories {
     mavenCentral()
+}
+
+val asciidoctorExt = "asciidoctorExt"
+configurations.create(asciidoctorExt) {
+    extendsFrom(configurations.testImplementation.get())
 }
 
 dependencies {
@@ -48,8 +54,11 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter-kotlin:1.1.11")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 //    testImplementation("org.springframework.security:spring-security-test:6.5.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 }
 
 dependencyManagement {
@@ -72,4 +81,23 @@ allOpen {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+val snippetsDir = file("build/generated-snippets")
+
+tasks.test {
+    outputs.dir(snippetsDir)
+    useJUnitPlatform()
+}
+
+tasks.asciidoctor {
+    dependsOn(tasks.test)
+
+    inputs.dir(snippetsDir)
+    configurations(asciidoctorExt)
+    baseDirFollowsSourceFile()
+}
+
+tasks.build {
+    dependsOn(tasks.asciidoctor)
 }

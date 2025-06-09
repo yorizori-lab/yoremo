@@ -1,0 +1,8 @@
+[[ping]]
+=== ping
+
+==== HTTP Request
+include::{snippets}/ping/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/ping/http-response.adoc[]
