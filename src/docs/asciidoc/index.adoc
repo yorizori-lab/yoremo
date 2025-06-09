@@ -18,3 +18,8 @@ include::api/ping/ping.adoc[]
 == Categories API
 
 include::api/categories/categories.adoc[]
+
+[[Recipes-API]]
+== Recipes API
+
+include::api/recipes/recipes.adoc[]
