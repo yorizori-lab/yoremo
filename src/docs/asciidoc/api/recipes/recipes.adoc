@@ -13,6 +13,7 @@ include::{snippets}/recipes-list/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/recipes-get/http-request.adoc[]
+include::{snippets}/recipes-get/path-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/recipes-get/http-response.adoc[]
@@ -42,6 +43,7 @@ include::{snippets}/recipes-update/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/recipes-delete/http-request.adoc[]
+include::{snippets}/recipes-delete/path-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/recipes-delete/http-response.adoc[]
