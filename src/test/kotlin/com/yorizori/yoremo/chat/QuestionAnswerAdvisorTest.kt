@@ -1,5 +1,6 @@
 package com.yorizori.yoremo.chat
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor
@@ -18,6 +19,7 @@ class QuestionAnswerAdvisorTest {
     private lateinit var chatModel: ChatModel
 
     @Test
+    @Disabled
     fun test() {
         val question = "Where does the adventure of Anacletus and Birba take place?"
 

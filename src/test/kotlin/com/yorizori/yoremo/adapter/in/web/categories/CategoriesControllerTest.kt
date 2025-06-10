@@ -59,7 +59,7 @@ class CategoriesControllerTest : RestDocsSupport() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.categories").isArray)
             .andExpect(
-                jsonPath("$.categories[0].categoryType")
+                jsonPath("$.categories[0].category_type")
                     .value(request.categoryType.name)
             )
             .andDo(
@@ -71,9 +71,9 @@ class CategoriesControllerTest : RestDocsSupport() {
                         parameterWithName("categoryType").description("카테고리 타입")
                     ),
                     responseFields(
-                        fieldWithPath("categories[].categoryId").description("카테고리 ID"),
+                        fieldWithPath("categories[].category_id").description("카테고리 ID"),
                         fieldWithPath("categories[].name").description("카테고리명"),
-                        fieldWithPath("categories[].categoryType").description("카테고리 타입"),
+                        fieldWithPath("categories[].category_type").description("카테고리 타입"),
                         fieldWithPath("categories[].description").optional().description("설명")
                     )
                 )
