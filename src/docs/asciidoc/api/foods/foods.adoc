@@ -1,0 +1,10 @@
+[[foods]]
+=== 칼로리 계산
+
+==== HTTP Request
+include::{snippets}/calculate-calories/http-request.adoc[]
+include::{snippets}/calculate-calories/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/calculate-calories/http-response.adoc[]
+include::{snippets}/calculate-calories/response-fields.adoc[]
