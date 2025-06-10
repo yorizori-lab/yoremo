@@ -14,12 +14,20 @@ class UpdateRecipesService(
     private val categoriesRepository: CategoriesRepository
 ) {
     @Transactional
-    fun update(id: Long, request: UpdateRecipes.Request): UpdateRecipes.Response {
+    fun update(id: Long, request: UpdateRecipes.Request, userId: Long): UpdateRecipes.Response {
         val existingRecipe = recipesRepository.findById(id)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Recipe not found with id: $id"
             )
+
+        if (existingRecipe.userId != userId) {
+            throw ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "접근 권한이 없습니다."
+            )
+        }
+
 
         val categories = categoriesRepository.findByIdIn(
             listOfNotNull(

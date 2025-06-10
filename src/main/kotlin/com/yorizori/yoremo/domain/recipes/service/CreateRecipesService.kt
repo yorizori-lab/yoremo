@@ -16,7 +16,7 @@ class CreateRecipesService(
     private val foodsRepository: FoodsRepository
 ) {
     @Transactional
-    fun create(request: CreateRecipes.Request): CreateRecipes.Response {
+    fun create(request: CreateRecipes.Request, userId: Long): CreateRecipes.Response {
         val categories = categoriesRepository.findByIdIn(
             listOfNotNull(
                 request.categoryTypeId,
@@ -43,7 +43,8 @@ class CreateRecipesService(
             servingSize = request.servingSize,
             difficulty = request.difficulty,
             imageUrl = request.imageUrl,
-            tags = request.tags
+            tags = request.tags,
+            userId = userId
         )
 
         val savedRecipes = recipesRepository.save(recipes)

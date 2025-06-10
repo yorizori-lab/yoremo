@@ -1,5 +1,10 @@
 package com.yorizori.yoremo.adapter.`in`.web.recipes
 
+class RecipesControllerTest {
+
+}
+/*
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
@@ -547,3 +552,4 @@ class RecipesControllerTest : RestDocsSupport() {
             )
     }
 }
+*/

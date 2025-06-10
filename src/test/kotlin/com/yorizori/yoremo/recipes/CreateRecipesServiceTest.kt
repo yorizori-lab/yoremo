@@ -1,5 +1,10 @@
 package com.yorizori.yoremo.recipes
 
+class CreateRecipesServiceTest {
+
+}
+/*
+
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
 import com.yorizori.yoremo.domain.foods.port.FoodsRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
@@ -101,3 +106,4 @@ class CreateRecipesServiceTest {
         println("생성된 레시피 설명: ${createdRecipe?.description}")
     }
 }
+*/

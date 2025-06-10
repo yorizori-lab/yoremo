@@ -1,5 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.recipes
 
+import com.yorizori.yoremo.adapter.`in`.web.config.security.YoremoAuthentication
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.DeleteRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
@@ -10,6 +11,7 @@ import com.yorizori.yoremo.domain.recipes.service.DeleteRecipesService
 import com.yorizori.yoremo.domain.recipes.service.GetRecipesService
 import com.yorizori.yoremo.domain.recipes.service.ListRecipesService
 import com.yorizori.yoremo.domain.recipes.service.UpdateRecipesService
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -36,24 +38,27 @@ class RecipesController(
 
     @PostMapping("/recipes")
     fun create(
-        @RequestBody request: CreateRecipes.Request
+        @RequestBody request: CreateRecipes.Request,
+        @AuthenticationPrincipal authentication: YoremoAuthentication
     ): CreateRecipes.Response {
-        return createRecipesService.create(request)
+        return createRecipesService.create(request, authentication.userId)
     }
 
     @PutMapping("/recipes/{id}")
     fun update(
         request: UpdateRecipes.PathVariable,
-        @RequestBody updateRequest: UpdateRecipes.Request
+        @RequestBody updateRequest: UpdateRecipes.Request,
+        @AuthenticationPrincipal authentication: YoremoAuthentication
     ): UpdateRecipes.Response {
-        return updateRecipesService.update(request.id, updateRequest)
+        return updateRecipesService.update(request.id, updateRequest, authentication.userId)
     }
 
     @DeleteMapping("/recipes/{id}")
     fun delete(
-        request: DeleteRecipes.PathVariable
+        request: DeleteRecipes.PathVariable,
+        @AuthenticationPrincipal authentication: YoremoAuthentication
     ): DeleteRecipes.Response {
-        return deleteRecipesService.delete(request.id)
+        return deleteRecipesService.delete(request.id, authentication.userId)
     }
 
     @GetMapping("/recipes/search")
