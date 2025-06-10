@@ -26,7 +26,6 @@ class DeleteRecipesService(
             )
         }
 
-
         recipesRepository.deleteById(id)
 
         return DeleteRecipes.Response(

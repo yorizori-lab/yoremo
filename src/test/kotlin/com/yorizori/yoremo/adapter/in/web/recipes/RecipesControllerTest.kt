@@ -1,8 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.recipes
 
-class RecipesControllerTest {
-
-}
+class RecipesControllerTest
 /*
 
 import com.fasterxml.jackson.databind.ObjectMapper

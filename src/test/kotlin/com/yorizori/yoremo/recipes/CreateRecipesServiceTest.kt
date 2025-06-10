@@ -1,8 +1,6 @@
 package com.yorizori.yoremo.recipes
 
-class CreateRecipesServiceTest {
-
-}
+class CreateRecipesServiceTest
 /*
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.CreateRecipes

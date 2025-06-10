@@ -28,7 +28,6 @@ class UpdateRecipesService(
             )
         }
 
-
         val categories = categoriesRepository.findByIdIn(
             listOfNotNull(
                 request.categoryTypeId,
