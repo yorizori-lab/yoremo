@@ -23,3 +23,13 @@ include::api/categories/categories.adoc[]
 == Recipes API
 
 include::api/recipes/recipes.adoc[]
+
+[[Foods-API]]
+== Foods API
+
+include::api/foods/foods.adoc[]
+
+[[MealRecords-API]]
+== Meal Records API
+
+include::api/mealrecords/mealrecords.adoc[]

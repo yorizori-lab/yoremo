@@ -14,15 +14,15 @@ class MealRecordsRepository(
         return mealRecordsJpaRepository.findById(id).getOrNull()
     }
 
-    fun save(mealRecords: MealRecords): MealRecords {
-        return mealRecordsJpaRepository.save(mealRecords)
+    fun findAllById(ids: List<Long>): List<MealRecords> {
+        return mealRecordsJpaRepository.findAllById(ids)
     }
 
     fun saveAll(mealRecords: List<MealRecords>): List<MealRecords> {
         return mealRecordsJpaRepository.saveAll(mealRecords)
     }
 
-    fun deleteById(id: Long) {
-        mealRecordsJpaRepository.deleteById(id)
+    fun deleteAllById(ids: List<Long>) {
+        mealRecordsJpaRepository.deleteAllById(ids)
     }
 }

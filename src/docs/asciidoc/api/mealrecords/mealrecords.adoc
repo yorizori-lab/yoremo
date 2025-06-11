@@ -1,0 +1,10 @@
+[[mealrecords]]
+=== 식단 추천
+
+==== HTTP Request
+include::{snippets}/recommend-meal-plans/http-request.adoc[]
+include::{snippets}/recommend-meal-plans/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/recommend-meal-plans/http-response.adoc[]
+include::{snippets}/recommend-meal-plans/response-fields.adoc[]
