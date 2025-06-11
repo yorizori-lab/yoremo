@@ -2,6 +2,8 @@ package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
+import com.yorizori.yoremo.domain.common.ResourceOwnerVerificationService
+import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -11,24 +13,21 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class UpdateRecipesService(
     private val recipesRepository: RecipesRepository,
-    private val categoriesRepository: CategoriesRepository
+    private val categoriesRepository: CategoriesRepository,
+    private val resourceOwnerVerificationService: ResourceOwnerVerificationService
 ) {
     @Transactional
     fun update(id: Long, request: UpdateRecipes.Request, userId: Long): UpdateRecipes.Response {
-        val existingRecipe = recipesRepository.findById(id)
-            ?: throw ResponseStatusException(
+        val existingRecipe = resourceOwnerVerificationService.checkAndGet(
+            entity = Recipes::class,
+            userId = userId,
+            resourceId = id
+        ) ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Recipe not found with id: $id"
             )
 
-        if (existingRecipe.userId != userId) {
-            throw ResponseStatusException(
-                HttpStatus.FORBIDDEN,
-                "접근 권한이 없습니다."
-            )
-        }
-
-        val categories = categoriesRepository.findByIdIn(
+            val categories = categoriesRepository.findByIdIn(
             listOfNotNull(
                 request.categoryTypeId,
                 request.categorySituationId,
