@@ -14,7 +14,6 @@ class UpdateMealRecordsService(
 
     @Transactional
     fun update(request: UpdateMealRecords.Request, userId: Long): UpdateMealRecords.Response {
-
         val existingRecords = mealRecordsRepository.findAllById(
             request.mealRecords.map { it.recordId }
         )

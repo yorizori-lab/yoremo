@@ -14,7 +14,6 @@ class DeleteMealRecordsService(
 
     @Transactional
     fun delete(request: DeleteMealRecords.Request, userId: Long): DeleteMealRecords.Response {
-
         val existingRecords = mealRecordsRepository.findAllById(request.recordIds)
 
         val unauthorizedRecords = existingRecords.filter { it.userId != userId }

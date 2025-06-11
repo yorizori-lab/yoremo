@@ -8,3 +8,44 @@ include::{snippets}/recommend-meal-plans/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/recommend-meal-plans/http-response.adoc[]
 include::{snippets}/recommend-meal-plans/response-fields.adoc[]
+
+=== 식단 목록
+
+==== HTTP Request
+include::{snippets}/search-meal-records/http-request.adoc[]
+include::{snippets}/search-meal-records/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-meal-records/http-response.adoc[]
+include::{snippets}/search-meal-records/response-fields.adoc[]
+
+=== 식단 생성
+
+==== HTTP Request
+include::{snippets}/create-meal-records/http-request.adoc[]
+include::{snippets}/create-meal-records/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-meal-records/http-response.adoc[]
+include::{snippets}/create-meal-records/response-fields.adoc[]
+
+=== 식단 수정
+
+==== HTTP Request
+include::{snippets}/update-meal-records/http-request.adoc[]
+include::{snippets}/update-meal-records/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/update-meal-records/http-response.adoc[]
+include::{snippets}/update-meal-records/response-fields.adoc[]
+
+
+=== 식단 삭제
+
+==== HTTP Request
+include::{snippets}/delete-meal-records/http-request.adoc[]
+include::{snippets}/delete-meal-records/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/delete-meal-records/http-response.adoc[]
+include::{snippets}/delete-meal-records/response-fields.adoc[]

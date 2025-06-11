@@ -3,6 +3,7 @@ package com.yorizori.yoremo.domain.mealrecords.port
 import com.yorizori.yoremo.adapter.out.persistence.mealrecords.MealRecordsJpaRepository
 import com.yorizori.yoremo.domain.mealrecords.entity.MealRecords
 import org.springframework.stereotype.Repository
+import java.time.Instant
 import kotlin.jvm.optionals.getOrNull
 
 @Repository
@@ -24,5 +25,17 @@ class MealRecordsRepository(
 
     fun deleteAllById(ids: List<Long>) {
         mealRecordsJpaRepository.deleteAllById(ids)
+    }
+
+    fun findByUserIdAndMealDateBetweenOrderByMealDateAsc(
+        userId: Long,
+        startDate: Instant,
+        endDate: Instant
+    ): List<MealRecords> {
+        return mealRecordsJpaRepository.findByUserIdAndMealDateBetweenOrderByMealDateAsc(
+            userId = userId,
+            startDate = startDate,
+            endDate = endDate
+        )
     }
 }

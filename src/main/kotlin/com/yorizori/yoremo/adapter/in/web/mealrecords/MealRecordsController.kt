@@ -4,13 +4,16 @@ import com.yorizori.yoremo.adapter.`in`.web.config.security.YoremoAuthentication
 import com.yorizori.yoremo.adapter.`in`.web.mealrecords.message.CreateMealRecords
 import com.yorizori.yoremo.adapter.`in`.web.mealrecords.message.DeleteMealRecords
 import com.yorizori.yoremo.adapter.`in`.web.mealrecords.message.MealPlanRecommendation
+import com.yorizori.yoremo.adapter.`in`.web.mealrecords.message.SearchMealRecords
 import com.yorizori.yoremo.adapter.`in`.web.mealrecords.message.UpdateMealRecords
 import com.yorizori.yoremo.domain.mealrecords.service.CreateMealRecordsService
 import com.yorizori.yoremo.domain.mealrecords.service.DeleteMealRecordsService
 import com.yorizori.yoremo.domain.mealrecords.service.MealPlanRecommendationService
+import com.yorizori.yoremo.domain.mealrecords.service.SearchMealRecordsService
 import com.yorizori.yoremo.domain.mealrecords.service.UpdateMealRecordsService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,7 +26,8 @@ class MealRecordsController(
     private val mealPlanRecommendationService: MealPlanRecommendationService,
     private val createMealRecordsService: CreateMealRecordsService,
     private val updateMealRecordsService: UpdateMealRecordsService,
-    private val deleteMealRecordsService: DeleteMealRecordsService
+    private val deleteMealRecordsService: DeleteMealRecordsService,
+    private val searchMealRecordsService: SearchMealRecordsService
 ) {
 
     @PostMapping("/recommend")
@@ -55,5 +59,13 @@ class MealRecordsController(
         @AuthenticationPrincipal authentication: YoremoAuthentication
     ): DeleteMealRecords.Response {
         return deleteMealRecordsService.delete(request, authentication.userId)
+    }
+
+    @GetMapping("/meal-records/search")
+    fun search(
+        @RequestBody request: SearchMealRecords.Request,
+        @AuthenticationPrincipal authentication: YoremoAuthentication
+    ): SearchMealRecords.Response {
+        return searchMealRecordsService.search(request, authentication.userId)
     }
 }
