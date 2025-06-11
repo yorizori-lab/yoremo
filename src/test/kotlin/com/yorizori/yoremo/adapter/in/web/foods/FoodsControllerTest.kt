@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -60,12 +63,14 @@ class FoodsControllerTest : RestDocsSupport() {
             .andDo(
                 document(
                     "calculate-calories",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
                     requestFields(
                         fieldWithPath("title").description("음식 이름"),
                         fieldWithPath("ingredients").description("재료 목록")
                     ),
                     responseFields(
-                        fieldWithPath("caloriesPer100g").description("100g당 칼로리")
+                        fieldWithPath("calories_per100g").description("100g당 칼로리")
                     )
                 )
             )
