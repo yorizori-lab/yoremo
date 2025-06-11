@@ -80,7 +80,9 @@ data class Recipes(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
-    val food: Foods? = null
+    val food: Foods? = null,
+
+    val userId: Long
 ) : BaseEntity() {
 
     data class Ingredient(

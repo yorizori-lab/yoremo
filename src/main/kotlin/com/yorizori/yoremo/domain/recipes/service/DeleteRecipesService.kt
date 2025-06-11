@@ -12,12 +12,19 @@ import org.springframework.web.server.ResponseStatusException
 class DeleteRecipesService(
     private val recipesRepository: RecipesRepository
 ) {
-    fun delete(id: Long): DeleteRecipes.Response {
+    fun delete(id: Long, userId: Long): DeleteRecipes.Response {
         val recipes = recipesRepository.findById(id)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "recipes not found with id: $id"
             )
+
+        if (recipes.userId != userId) {
+            throw ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "접근 권한이 없습니다."
+            )
+        }
 
         recipesRepository.deleteById(id)
 

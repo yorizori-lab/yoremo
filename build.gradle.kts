@@ -55,7 +55,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter-kotlin:1.1.11")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-//    testImplementation("org.springframework.security:spring-security-test:6.5.0")
+    testImplementation("org.springframework.security:spring-security-test:6.5.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")

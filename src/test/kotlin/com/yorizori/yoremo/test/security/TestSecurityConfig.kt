@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.test
+package com.yorizori.yoremo.test.security
 
 import com.yorizori.yoremo.adapter.`in`.web.config.security.SecurityConfig
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
