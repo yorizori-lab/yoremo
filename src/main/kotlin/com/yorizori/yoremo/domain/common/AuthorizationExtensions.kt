@@ -24,8 +24,7 @@ fun <T: Authorizable> List<T>.checkAllOwnership(
         throw ResponseStatusException(HttpStatus.NOT_FOUND, "리소스를 찾을 수 없습니다.")
     }
 
-    val unauthorizedEntities = this.filter { it.getOwnerId() != userId }
-    if (unauthorizedEntities.isNotEmpty()) {
+    if (this.any { it.getOwnerId() != userId }) {
         throw ResponseStatusException(HttpStatus.FORBIDDEN, "접근 권한이 없습니다.")
     }
 
