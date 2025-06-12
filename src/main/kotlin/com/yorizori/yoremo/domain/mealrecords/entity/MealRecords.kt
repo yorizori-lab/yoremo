@@ -1,5 +1,6 @@
 package com.yorizori.yoremo.domain.mealrecords.entity
 
+import com.yorizori.yoremo.domain.common.Authorizable
 import com.yorizori.yoremo.domain.common.BaseEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -33,7 +34,11 @@ data class MealRecords(
     val totalCalories: Int?,
 
     val notes: String? = null
-) : BaseEntity() {
+) : BaseEntity(), Authorizable {
+
+    override fun getOwnerId(): Long {
+        return this.userId
+    }
 
     enum class MealType(val description: String) {
         BREAKFAST("아침"),
