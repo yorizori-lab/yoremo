@@ -33,3 +33,8 @@ include::api/foods/foods.adoc[]
 == Meal Records API
 
 include::api/mealrecords/mealrecords.adoc[]
+
+[[RecipeLikes-API]]
+== Recipe Likes API
+
+include::api/recipelikes/recipelikes.adoc[]
