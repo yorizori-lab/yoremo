@@ -1,6 +1,7 @@
 package com.yorizori.yoremo.domain.recipes.entity
 
 import com.yorizori.yoremo.domain.categories.entity.Categories
+import com.yorizori.yoremo.domain.common.Authorizable
 import com.yorizori.yoremo.domain.common.BaseEntity
 import com.yorizori.yoremo.domain.foods.entity.Foods
 import jakarta.persistence.CascadeType
@@ -83,7 +84,11 @@ data class Recipes(
     val food: Foods? = null,
 
     val userId: Long
-) : BaseEntity() {
+) : BaseEntity(), Authorizable {
+
+    override fun getOwnerId(): Long {
+        return this.userId
+    }
 
     data class Ingredient(
         val name: String,
