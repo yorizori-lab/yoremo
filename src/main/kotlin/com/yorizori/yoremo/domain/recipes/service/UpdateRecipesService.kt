@@ -2,11 +2,10 @@ package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
 import com.yorizori.yoremo.domain.categories.port.CategoriesRepository
+import com.yorizori.yoremo.domain.common.checkOwnership
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 class UpdateRecipesService(
@@ -16,17 +15,7 @@ class UpdateRecipesService(
     @Transactional
     fun update(id: Long, request: UpdateRecipes.Request, userId: Long): UpdateRecipes.Response {
         val existingRecipe = recipesRepository.findById(id)
-            ?: throw ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Recipe not found with id: $id"
-            )
-
-        if (existingRecipe.userId != userId) {
-            throw ResponseStatusException(
-                HttpStatus.FORBIDDEN,
-                "접근 권한이 없습니다."
-            )
-        }
+            .checkOwnership(userId)
 
         val categories = categoriesRepository.findByIdIn(
             listOfNotNull(
