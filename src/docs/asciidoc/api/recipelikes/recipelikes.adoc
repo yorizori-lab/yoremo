@@ -1,0 +1,20 @@
+[[recipelikes]]
+=== 좋아요 토글
+
+==== HTTP Request
+include::{snippets}/recipe-likes/toggle/http-request.adoc[]
+include::{snippets}/recipe-likes/toggle/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipe-likes/toggle/http-response.adoc[]
+include::{snippets}/recipe-likes/toggle/response-fields.adoc[]
+
+=== 좋아요 카운트
+
+==== HTTP Request
+include::{snippets}/recipe-likes/count/http-request.adoc[]
+include::{snippets}/recipe-likes/count/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipe-likes/count/http-response.adoc[]
+include::{snippets}/recipe-likes/count/response-fields.adoc[]
