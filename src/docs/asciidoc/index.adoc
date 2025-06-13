@@ -14,6 +14,11 @@
 
 include::api/ping/ping.adoc[]
 
+[[Users-API]]
+== 사용자 API
+
+include::api/users/users.adoc[]
+
 [[Categories-API]]
 == 카테고리 API
 
