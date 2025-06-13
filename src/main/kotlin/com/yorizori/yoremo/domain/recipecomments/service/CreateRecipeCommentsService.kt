@@ -1,24 +1,26 @@
 package com.yorizori.yoremo.domain.recipecomments.service
 
-import com.yorizori.yoremo.adapter.`in`.web.recipecomments.message.CreateRecipeComment
+import com.yorizori.yoremo.adapter.`in`.web.recipecomments.message.CreateRecipeComments
 import com.yorizori.yoremo.domain.recipecomments.entity.RecipeComments
 import com.yorizori.yoremo.domain.recipecomments.port.RecipeCommentsRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import org.springframework.stereotype.Service
 
 @Service
-class CreateRecipeCommentService(
+class CreateRecipeCommentsService(
     private val recipeCommentsRepository: RecipeCommentsRepository,
     private val recipesRepository: RecipesRepository
 ) {
 
     fun create(
         recipeId: Long,
-        request: CreateRecipeComment.Request,
+        request: CreateRecipeComments.Request,
         userId: Long
-    ): CreateRecipeComment.Response {
+    ): CreateRecipeComments.Response {
         recipesRepository.findById(recipeId)
             ?: throw IllegalArgumentException("존재하지 않는 레시피입니다: $recipeId")
+
+        println("request.parentCommentId:" + request.parentCommentId)
 
         val depth = if (request.parentCommentId != null) {
             val parent = recipeCommentsRepository.findById(request.parentCommentId)
@@ -51,12 +53,8 @@ class CreateRecipeCommentService(
 
         val savedComment = recipeCommentsRepository.save(newComment)
 
-        return CreateRecipeComment.Response(
-            commentId = savedComment.commentId!!,
-            content = savedComment.content,
-            depth = savedComment.depth,
-            createdAt = savedComment.createdAt,
-            updatedAt = savedComment.updatedAt
+        return CreateRecipeComments.Response(
+            commentId = savedComment.commentId!!
         )
     }
 }

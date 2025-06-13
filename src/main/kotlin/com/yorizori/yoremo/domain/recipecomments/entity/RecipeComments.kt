@@ -12,7 +12,7 @@ import org.hibernate.annotations.DynamicUpdate
 @Entity
 @DynamicUpdate
 @Table(name = "recipe_comments")
-class RecipeComments(
+data class RecipeComments(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val commentId: Long? = null,

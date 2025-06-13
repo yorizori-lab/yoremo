@@ -1,8 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.recipecomments.message
 
-import java.time.Instant
-
-abstract class CreateRecipeComment {
+abstract class CreateRecipeComments {
 
     data class PathVariable(val recipeId: Long)
 
@@ -12,10 +10,6 @@ abstract class CreateRecipeComment {
     )
 
     data class Response(
-        val commentId: Long,
-        val content: String,
-        val depth: Int,
-        val createdAt: Instant,
-        val updatedAt: Instant
+        val commentId: Long
     )
 }
