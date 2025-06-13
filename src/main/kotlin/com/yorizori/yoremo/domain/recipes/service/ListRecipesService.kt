@@ -1,6 +1,8 @@
 package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.SearchRecipes
+import com.yorizori.yoremo.domain.recipecomments.port.RecipeCommentsRepository
+import com.yorizori.yoremo.domain.recipelikes.port.RecipeLikesRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import com.yorizori.yoremo.domain.recipes.port.RecipesSearchCommand
 import org.springframework.data.domain.PageRequest
@@ -9,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ListRecipesService(
-    private val recipesRepository: RecipesRepository
+    private val recipesRepository: RecipesRepository,
+    private val recipeLikesRepository: RecipeLikesRepository,
+    private val recipeCommentsRepository: RecipeCommentsRepository
 ) {
     @Transactional(readOnly = true)
     fun search(request: SearchRecipes.Request): SearchRecipes.Response {
@@ -24,6 +28,11 @@ class ListRecipesService(
             ),
             pageable = PageRequest.of(request.page!!, request.pageSize!!)
         )
+
+        val recipeIds = recipes.content.mapNotNull { it.recipeId }
+
+        val likesCountMap = recipeLikesRepository.countByRecipeIdIn(recipeIds)
+        val commentsCountMap = recipeCommentsRepository.countByRecipeIdIn(recipeIds)
 
         val content = recipes.content.map {
             SearchRecipes.ResponseItem(
@@ -43,6 +52,8 @@ class ListRecipesService(
                 difficulty = it.difficulty?.description,
                 imageUrl = it.imageUrl,
                 tags = it.tags,
+                totalLikes = likesCountMap[it.recipeId!!] ?: 0L,
+                totalComments = commentsCountMap[it.recipeId!!] ?: 0L,
                 createdAt = it.createdAt,
                 updatedAt = it.updatedAt
             )
