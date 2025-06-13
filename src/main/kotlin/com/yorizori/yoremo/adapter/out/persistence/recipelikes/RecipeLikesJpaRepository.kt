@@ -10,4 +10,6 @@ interface RecipeLikesJpaRepository : JpaRepository<RecipeLikes, Long> {
     fun findByRecipeIdAndUserId(recipeId: Long, userId: Long): RecipeLikes?
 
     fun countByRecipeId(recipeId: Long): Long
+
+    fun countByUserId(userId: Long): Long
 }

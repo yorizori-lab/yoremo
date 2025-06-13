@@ -2,6 +2,8 @@ package com.yorizori.yoremo.recipes
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.SearchRecipes
 import com.yorizori.yoremo.domain.categories.entity.Categories
+import com.yorizori.yoremo.domain.recipecomments.port.RecipeCommentsRepository
+import com.yorizori.yoremo.domain.recipelikes.port.RecipeLikesRepository
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
 import com.yorizori.yoremo.domain.recipes.service.ListRecipesService
@@ -16,8 +18,14 @@ import java.time.Instant
 class ListRecipesServiceTest {
 
     private val recipesRepository: RecipesRepository = mockk()
+    private val recipeLikesRepository: RecipeLikesRepository = mockk()
+    private val recipeCommentsRepository: RecipeCommentsRepository = mockk()
 
-    private val sut: ListRecipesService = ListRecipesService(recipesRepository)
+    private val sut: ListRecipesService = ListRecipesService(
+        recipesRepository,
+        recipeLikesRepository,
+        recipeCommentsRepository
+    )
 
     private val categoryType = Categories(1L, "한식", Categories.Type.TYPE)
     private val categorySituation = Categories(2L, "저녁", Categories.Type.SITUATION)
@@ -108,6 +116,14 @@ class ListRecipesServiceTest {
             2
         )
 
+        every {
+            recipeLikesRepository.countByRecipeIdIn(listOf(1L, 2L))
+        } returns mapOf(1L to 5L, 2L to 3L)
+
+        every {
+            recipeCommentsRepository.countByRecipeIdIn(listOf(1L, 2L))
+        } returns mapOf(1L to 2L, 2L to 1L)
+
         // When
         val actual = sut.search(request)
 
@@ -135,6 +151,14 @@ class ListRecipesServiceTest {
         every {
             recipesRepository.search(any(), any())
         } returns PageImpl(emptyList(), pageable, 0)
+
+        every {
+            recipeLikesRepository.countByRecipeIdIn(emptyList())
+        } returns emptyMap()
+
+        every {
+            recipeCommentsRepository.countByRecipeIdIn(emptyList())
+        } returns emptyMap()
 
         // When
         val result = sut.search(request)

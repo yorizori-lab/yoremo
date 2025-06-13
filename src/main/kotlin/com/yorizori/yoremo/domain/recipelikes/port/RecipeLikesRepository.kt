@@ -1,13 +1,17 @@
 package com.yorizori.yoremo.domain.recipelikes.port
 
+import com.yorizori.yoremo.adapter.out.persistence.recipelikes.RecipeLikesAdapter
 import com.yorizori.yoremo.adapter.out.persistence.recipelikes.RecipeLikesJpaRepository
 import com.yorizori.yoremo.domain.recipelikes.entity.RecipeLikes
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import kotlin.jvm.optionals.getOrNull
 
 @Repository
 class RecipeLikesRepository(
-    private val recipeLikesJpaRepository: RecipeLikesJpaRepository
+    private val recipeLikesJpaRepository: RecipeLikesJpaRepository,
+    private val recipeLikesAdapter: RecipeLikesAdapter
 ) {
     fun findById(id: Long): RecipeLikes? {
         return recipeLikesJpaRepository.findById(id).getOrNull()
@@ -31,5 +35,17 @@ class RecipeLikesRepository(
 
     fun delete(recipeLike: RecipeLikes) {
         recipeLikesJpaRepository.delete(recipeLike)
+    }
+
+    fun countByRecipeIdIn(recipeIds: List<Long>): Map<Long, Long> {
+        return recipeLikesAdapter.countByRecipeIdIn(recipeIds)
+    }
+
+    fun findByUserIdOrderByCreatedAtDesc(userId: Long, pageable: Pageable): Page<RecipeLikes> {
+        return recipeLikesAdapter.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+    }
+
+    fun countByUserId(userId: Long): Long {
+        return recipeLikesJpaRepository.countByUserId(userId)
     }
 }

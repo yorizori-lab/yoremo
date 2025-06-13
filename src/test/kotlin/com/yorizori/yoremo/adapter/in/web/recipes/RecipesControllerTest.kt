@@ -125,6 +125,8 @@ class RecipesControllerTest : RestDocsSupport() {
                     difficulty = "EASY",
                     imageUrl = "https://example.com/recipe.jpg",
                     tags = listOf("매콤", "찌개", "한식"),
+                    totalLikes = 10,
+                    totalComments = 5,
                     createdAt = Instant.now(),
                     updatedAt = Instant.now()
                 )
@@ -211,6 +213,12 @@ class RecipesControllerTest : RestDocsSupport() {
                         ),
                         fieldWithPath("recipes[].tags").optional().description(
                             "태그 목록"
+                        ),
+                        fieldWithPath("recipes[].total_likes").optional().description(
+                            "총 좋아요 수"
+                        ),
+                        fieldWithPath("recipes[].total_comments").optional().description(
+                            "총 댓글 수"
                         ),
                         fieldWithPath("recipes[].created_at").description(
                             "생성 일시"
