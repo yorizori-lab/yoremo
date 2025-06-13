@@ -18,3 +18,13 @@ include::{snippets}/recipe-likes/count/path-parameters.adoc[]
 ==== HTTP Response
 include::{snippets}/recipe-likes/count/http-response.adoc[]
 include::{snippets}/recipe-likes/count/response-fields.adoc[]
+
+=== 유저 좋아요 목록
+
+==== HTTP Request
+include::{snippets}/recipe-likes/user-get/http-request.adoc[]
+include::{snippets}/recipe-likes/user-get/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipe-likes/user-get/http-response.adoc[]
+include::{snippets}/recipe-likes/user-get/response-fields.adoc[]
