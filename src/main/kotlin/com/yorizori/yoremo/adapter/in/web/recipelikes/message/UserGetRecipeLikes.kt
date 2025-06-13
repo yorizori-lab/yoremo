@@ -33,6 +33,7 @@ abstract class UserGetRecipeLikes {
         val imageUrl: String?,
         val tags: List<String>?,
         val totalLikes: Long,
+        val totalComments: Long,
         val createdAt: Instant,
         val updatedAt: Instant
     )
