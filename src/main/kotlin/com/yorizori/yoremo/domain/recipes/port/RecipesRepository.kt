@@ -30,6 +30,17 @@ class RecipesRepository(
         return recipesJpaRepository.findAllById(ids)
     }
 
+    fun countByUserId(userId: Long): Long {
+        return recipesJpaRepository.countByUserId(userId)
+    }
+
+    fun findByUserIdOrderByCreatedAtDesc(
+        userId: Long,
+        pageable: Pageable
+    ): Page<Recipes> {
+        return recipesAdapter.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+    }
+
     // 여러 조건으로 검색
     fun search(
         command: RecipesSearchCommand,
