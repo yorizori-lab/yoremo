@@ -3,19 +3,13 @@ package com.yorizori.yoremo.adapter.`in`.web.recipes.message
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import java.time.Instant
 
-abstract class SearchRecipes {
+abstract class UserGetRecipes {
+
     data class Request(
-        val categoryTypeId: Long? = null,
-        val categorySituationId: Long? = null,
-        val categoryIngredientId: Long? = null,
-        val categoryMethodId: Long? = null,
-        val difficulty: Recipes.Difficulty? = null,
-        val tags: List<String>? = null,
         val page: Int? = 0,
         val pageSize: Int? = 10
     )
 
-    // 페이징 응답을 위한 새 클래스
     data class Response(
         val totalCount: Int,
         val recipes: List<ResponseItem>

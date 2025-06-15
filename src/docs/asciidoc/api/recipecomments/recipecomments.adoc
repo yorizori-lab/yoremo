@@ -1,0 +1,40 @@
+[[recipecomments]]
+=== 댓글 목록 조회
+
+==== HTTP Request
+include::{snippets}/recipe-comment/list/http-request.adoc[]
+include::{snippets}/recipe-comment/list/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipe-comment/list/http-response.adoc[]
+include::{snippets}/recipe-comment/list/response-fields.adoc[]
+
+=== 댓글 작성
+
+==== HTTP Request
+include::{snippets}/recipe-comment/create/http-request.adoc[]
+include::{snippets}/recipe-comment/create/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipe-comment/create/http-response.adoc[]
+include::{snippets}/recipe-comment/create/response-fields.adoc[]
+
+=== 댓글 수정
+
+==== HTTP Request
+include::{snippets}/recipe-comment/update/http-request.adoc[]
+include::{snippets}/recipe-comment/update/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipe-comment/update/http-response.adoc[]
+include::{snippets}/recipe-comment/update/response-fields.adoc[]
+
+=== 댓글 삭제
+
+==== HTTP Request
+include::{snippets}/recipe-comment/delete/http-request.adoc[]
+include::{snippets}/recipe-comment/delete/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/recipe-comment/delete/http-response.adoc[]
+include::{snippets}/recipe-comment/delete/response-fields.adoc[]

@@ -6,11 +6,13 @@ import com.yorizori.yoremo.adapter.`in`.web.recipes.message.DeleteRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.SearchRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
+import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UserGetRecipes
 import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
 import com.yorizori.yoremo.domain.recipes.service.DeleteRecipesService
 import com.yorizori.yoremo.domain.recipes.service.GetRecipesService
 import com.yorizori.yoremo.domain.recipes.service.ListRecipesService
 import com.yorizori.yoremo.domain.recipes.service.UpdateRecipesService
+import com.yorizori.yoremo.domain.recipes.service.UserGetRecipesService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +29,8 @@ class RecipesController(
     private val createRecipesService: CreateRecipesService,
     private val updateRecipesService: UpdateRecipesService,
     private val deleteRecipesService: DeleteRecipesService,
-    private val searchRecipesService: ListRecipesService
+    private val searchRecipesService: ListRecipesService,
+    private val userGetRecipesService: UserGetRecipesService
 ) {
     @GetMapping("/recipes/{id}")
     fun get(
@@ -66,5 +69,16 @@ class RecipesController(
         request: SearchRecipes.Request
     ): SearchRecipes.Response {
         return searchRecipesService.search(request)
+    }
+
+    @GetMapping("/my-recipes")
+    fun userGetRecipes(
+        request: UserGetRecipes.Request,
+        @AuthenticationPrincipal authentication: YoremoAuthentication
+    ): UserGetRecipes.Response {
+        return userGetRecipesService.getUserRecipes(
+            userId = authentication.userId,
+            request = request
+        )
     }
 }
