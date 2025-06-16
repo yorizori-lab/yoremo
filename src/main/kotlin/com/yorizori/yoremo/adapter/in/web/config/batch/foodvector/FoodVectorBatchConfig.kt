@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.adapter.`in`.web.config.batch
+package com.yorizori.yoremo.adapter.`in`.web.config.batch.foodvector
 
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -18,10 +18,10 @@ class FoodVectorBatchConfig(
     @Bean
     fun foodVectorSyncJob(
         jobRepository: JobRepository,
-        foodVoctorSyncStep: Step
+        foodVectorSyncStep: Step
     ): Job {
         return JobBuilder("foodVectorSyncJob", jobRepository)
-            .start(foodVoctorSyncStep)
+            .start(foodVectorSyncStep)
             .build()
     }
 

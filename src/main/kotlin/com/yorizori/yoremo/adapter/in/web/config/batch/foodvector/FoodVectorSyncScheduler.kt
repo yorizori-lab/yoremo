@@ -1,4 +1,4 @@
-package com.yorizori.yoremo.adapter.`in`.web.config.batch
+package com.yorizori.yoremo.adapter.`in`.web.config.batch.foodvector
 
 import com.yorizori.yoremo.adapter.out.persistence.foods.FoodsAdapter
 import org.slf4j.LoggerFactory

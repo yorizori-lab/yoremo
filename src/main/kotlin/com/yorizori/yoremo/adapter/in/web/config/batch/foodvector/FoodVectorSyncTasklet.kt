@@ -1,7 +1,6 @@
-package com.yorizori.yoremo.adapter.`in`.web.config.batch
+package com.yorizori.yoremo.adapter.`in`.web.config.batch.foodvector
 
 import com.yorizori.yoremo.adapter.out.persistence.foods.FoodsAdapter
-import com.yorizori.yoremo.adapter.out.persistence.recipes.RecipesJpaRepository
 import com.yorizori.yoremo.domain.foods.entity.Foods
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import org.slf4j.LoggerFactory
@@ -18,7 +17,6 @@ import java.time.Instant
 @Component
 class FoodVectorSyncTasklet(
     private val foodsAdapter: FoodsAdapter,
-    private val recipesJpaRepository: RecipesJpaRepository,
     private val vectorStore: VectorStore
 ) : Tasklet {
 
