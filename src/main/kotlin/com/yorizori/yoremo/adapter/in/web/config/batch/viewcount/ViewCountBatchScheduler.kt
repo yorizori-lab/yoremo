@@ -20,23 +20,18 @@ class ViewCountBatchScheduler(
     fun runMonthlyViewCountBatch() {
         val lastMonth = YearMonth.now().minusMonths(1)
         logger.info("월간 조회수 배치 실행 - 대상: $lastMonth")
-
-        runViewCountBatch(lastMonth)
-    }
-
-    private fun runViewCountBatch(targetMonth: YearMonth) {
         try {
             val jobParameters = JobParametersBuilder()
                 .addLong("timestamp", System.currentTimeMillis())
-                .addString("targetMonth", targetMonth.toString()) // 2024-05 형식
+                .addString("targetMonth", lastMonth.toString()) // 2024-05 형식
                 .addString("jobType", "monthly")
                 .toJobParameters()
 
             val jobExecution = jobLauncher.run(viewCountJob, jobParameters)
 
-            logger.info("조회수 배치 실행 - 대상월: $targetMonth, 실행ID: ${jobExecution.id}")
+            logger.info("조회수 배치 실행 - 대상월: $lastMonth, 실행ID: ${jobExecution.id}")
         } catch (e: Exception) {
-            logger.error("조회수 배치 실행 실패 - 대상월: $targetMonth", e)
+            logger.error("조회수 배치 실행 실패 - 대상월: $lastMonth", e)
         }
     }
 }
