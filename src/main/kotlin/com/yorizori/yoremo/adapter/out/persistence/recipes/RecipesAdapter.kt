@@ -72,6 +72,14 @@ class RecipesAdapter(
         return PageImpl(content, pageable, total)
     }
 
+    fun incrementViewCountBy(recipeId: Long, count: Long): Long {
+        return queryFactory
+            .update(recipes)
+            .set(recipes.viewCount, recipes.viewCount.add(count))
+            .where(recipes.recipeId.eq(recipeId))
+            .execute()
+    }
+
     private fun buildConditions(command: RecipesSearchCommand): Collection<BooleanExpression?> {
         return listOf(
             command.categoryTypeId?.let { recipes.categoryType.categoryId.eq(it) },

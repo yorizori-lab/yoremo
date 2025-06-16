@@ -1,24 +1,46 @@
 package com.yorizori.yoremo.domain.recipes.service
 
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
-import com.yorizori.yoremo.domain.recipes.port.RecipesRepository
+import com.yorizori.yoremo.domain.recipeviewlogs.entity.RecipeViewLogs
+import com.yorizori.yoremo.domain.recipeviewlogs.port.RecipeViewLogsRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.net.InetAddress
+import java.time.LocalDateTime
 
 @Service
 class GetRecipesService(
-    private val recipesRepository: RecipesRepository
+    private val recipeViewLogsRepository: RecipeViewLogsRepository
 ) {
 
-    @Transactional(readOnly = true)
-    fun getRecipes(id: Long): GetRecipes.Response {
-        val recipes = recipesRepository.findById(id)
+    @Transactional
+    fun getRecipes(
+        id: Long,
+        ipAddress: InetAddress,
+        userId: Long?,
+        userAgent: String?
+    ): GetRecipes.Response {
+        val result = recipeViewLogsRepository.findRecipeWithRecentViewCheck(id, ipAddress)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "recipes not found with id: $id"
             )
+
+        val (recipes, recentViewLog) = result
+
+        if (recentViewLog == null) {
+            recipeViewLogsRepository.save(
+                RecipeViewLogs(
+                    recipeId = id,
+                    userId = userId,
+                    ipAddress = ipAddress,
+                    userAgent = userAgent,
+                    viewedAt = LocalDateTime.now()
+                )
+            )
+        }
 
         return GetRecipes.Response(
             recipeId = recipes.recipeId!!,
@@ -39,7 +61,8 @@ class GetRecipesService(
             tags = recipes.tags,
             createdAt = recipes.createdAt,
             updatedAt = recipes.updatedAt,
-            caloriesPer100g = recipes.food?.caloriesPer100g
+            caloriesPer100g = recipes.food?.caloriesPer100g,
+            viewCount = recipeViewLogsRepository.countLogsByRecipeId(id) + recipes.viewCount
         )
     }
 }

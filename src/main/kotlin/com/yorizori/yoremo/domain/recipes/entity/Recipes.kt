@@ -83,7 +83,9 @@ data class Recipes(
     )
     val food: Foods? = null,
 
-    val userId: Long
+    val userId: Long,
+
+    val viewCount: Long = 0L
 ) : BaseEntity(), Authorizable {
 
     override fun getOwnerId(): Long {

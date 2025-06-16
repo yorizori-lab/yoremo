@@ -243,7 +243,7 @@ class RecipesControllerTest : RestDocsSupport() {
         val request = giveMeOne<GetRecipes.PathVariable>()
 
         every {
-            getRecipesService.getRecipes(request.id)
+            getRecipesService.getRecipes(any(), any(), any(), any())
         } returns GetRecipes.Response(
             recipeId = request.id,
             title = "테스트",
@@ -282,7 +282,8 @@ class RecipesControllerTest : RestDocsSupport() {
             tags = listOf("매콤", "찌개", "한식"),
             createdAt = Instant.now(),
             updatedAt = Instant.now(),
-            caloriesPer100g = 150L
+            caloriesPer100g = 150L,
+            viewCount = 42L
         )
 
         // when, then
@@ -322,6 +323,7 @@ class RecipesControllerTest : RestDocsSupport() {
                         fieldWithPath("created_at").description("생성 일시"),
                         fieldWithPath("updated_at").description("수정 일시"),
                         fieldWithPath("calories_per100g").optional().description("100g당 칼로리"),
+                        fieldWithPath("view_count").description("조회수"),
                         fieldWithPath("ingredients[].name").description("재료명"),
                         fieldWithPath("ingredients[].amount").description("재료 수량"),
                         fieldWithPath("ingredients[].unit").description("재료 단위"),

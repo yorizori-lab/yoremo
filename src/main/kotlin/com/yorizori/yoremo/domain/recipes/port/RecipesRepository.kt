@@ -41,6 +41,10 @@ class RecipesRepository(
         return recipesAdapter.findByUserIdOrderByCreatedAtDesc(userId, pageable)
     }
 
+    fun incrementViewCountBy(recipeId: Long, increment: Long) {
+        recipesAdapter.incrementViewCountBy(recipeId, increment)
+    }
+
     // 여러 조건으로 검색
     fun search(
         command: RecipesSearchCommand,
