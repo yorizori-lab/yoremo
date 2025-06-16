@@ -73,7 +73,8 @@ class SecurityConfig(
                         "/api/users/v1/send-verification",
                         "/api/users/v1/verify-email",
                         "/api/users/v1/register",
-                        "/api/users/v1/login"
+                        "/api/users/v1/login",
+                        "/api/recipes/v1/recipes/{id}"
                     ).permitAll()
                     .requestMatchers("/ping").permitAll()
                     .anyRequest().authenticated()
