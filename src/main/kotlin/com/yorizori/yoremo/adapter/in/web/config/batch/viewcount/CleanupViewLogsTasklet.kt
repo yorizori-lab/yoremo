@@ -1,6 +1,6 @@
 package com.yorizori.yoremo.adapter.`in`.web.config.batch.viewcount
 
-import com.yorizori.yoremo.adapter.out.persistence.recipeviewlogs.RecipeViewLogsAdapter
+import com.yorizori.yoremo.domain.recipeviewlogs.port.RecipeViewLogsRepository
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.scope.context.ChunkContext
@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 @Component
 class CleanupViewLogsTasklet(
-    private val recipeViewLogsAdapter: RecipeViewLogsAdapter
+    private val recipeViewLogsRepository: RecipeViewLogsRepository
 ) : Tasklet {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -27,7 +27,7 @@ class CleanupViewLogsTasklet(
 
             logger.info("조회 로그 정리 시작 - 삭제 기준: $currentMonthStart 이전 (현재 월 이전 모든 데이터)")
 
-            val deletedCount = recipeViewLogsAdapter.deleteLogsBeforeDate(cutoffDate)
+            val deletedCount = recipeViewLogsRepository.deleteLogsBeforeDate(cutoffDate)
 
             logger.info("조회 로그 정리 완료 - 삭제된 로그: ${deletedCount}건")
         } catch (e: Exception) {

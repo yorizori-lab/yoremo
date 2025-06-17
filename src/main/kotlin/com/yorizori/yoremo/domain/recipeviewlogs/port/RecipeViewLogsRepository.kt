@@ -35,4 +35,8 @@ class RecipeViewLogsRepository(
     ): Map<Long, Long> {
         return recipeViewLogsAdapter.getViewCountsBetweenDates(startDate, endDate)
     }
+
+    fun deleteLogsBeforeDate(cutoffDate: LocalDateTime): Long {
+        return recipeViewLogsAdapter.deleteLogsBeforeDate(cutoffDate)
+    }
 }
