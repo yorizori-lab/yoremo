@@ -48,3 +48,8 @@ include::api/recipelikes/recipelikes.adoc[]
 == 레시피 댓글 API
 
 include::api/recipecomments/recipecomments.adoc[]
+
+[[ShoppingCart-API]]
+== 장바구니 API
+
+include::api/shoppingcart/shoppingcart.adoc[]
