@@ -7,12 +7,14 @@ import com.yorizori.yoremo.adapter.`in`.web.recipes.message.DeleteRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.GetRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.SearchRecipes
 import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UpdateRecipes
+import com.yorizori.yoremo.adapter.`in`.web.recipes.message.UserGetRecipes
 import com.yorizori.yoremo.domain.recipes.entity.Recipes
 import com.yorizori.yoremo.domain.recipes.service.CreateRecipesService
 import com.yorizori.yoremo.domain.recipes.service.DeleteRecipesService
 import com.yorizori.yoremo.domain.recipes.service.GetRecipesService
 import com.yorizori.yoremo.domain.recipes.service.ListRecipesService
 import com.yorizori.yoremo.domain.recipes.service.UpdateRecipesService
+import com.yorizori.yoremo.domain.recipes.service.UserGetRecipesService
 import com.yorizori.yoremo.test.FixtureMonkeyUtils.giveMeOne
 import com.yorizori.yoremo.test.RestDocsSupport
 import com.yorizori.yoremo.test.YoremoControllerTest
@@ -57,6 +59,9 @@ class RecipesControllerTest : RestDocsSupport() {
     @MockkBean
     private lateinit var searchRecipesService: ListRecipesService
 
+    @MockkBean
+    private lateinit var userGetRecipesService: UserGetRecipesService
+
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
@@ -66,7 +71,8 @@ class RecipesControllerTest : RestDocsSupport() {
             createRecipesService,
             updateRecipesService,
             deleteRecipesService,
-            searchRecipesService
+            searchRecipesService,
+            userGetRecipesService
         )
     }
 
@@ -125,6 +131,8 @@ class RecipesControllerTest : RestDocsSupport() {
                     difficulty = "EASY",
                     imageUrl = "https://example.com/recipe.jpg",
                     tags = listOf("매콤", "찌개", "한식"),
+                    totalLikes = 10,
+                    totalComments = 5,
                     createdAt = Instant.now(),
                     updatedAt = Instant.now()
                 )
@@ -149,7 +157,7 @@ class RecipesControllerTest : RestDocsSupport() {
             .andExpect(jsonPath("$.recipes").isArray)
             .andDo(
                 document(
-                    "recipes-list",
+                    "recipes/list",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     queryParameters(
@@ -212,6 +220,12 @@ class RecipesControllerTest : RestDocsSupport() {
                         fieldWithPath("recipes[].tags").optional().description(
                             "태그 목록"
                         ),
+                        fieldWithPath("recipes[].total_likes").optional().description(
+                            "총 좋아요 수"
+                        ),
+                        fieldWithPath("recipes[].total_comments").optional().description(
+                            "총 댓글 수"
+                        ),
                         fieldWithPath("recipes[].created_at").description(
                             "생성 일시"
                         ),
@@ -229,7 +243,7 @@ class RecipesControllerTest : RestDocsSupport() {
         val request = giveMeOne<GetRecipes.PathVariable>()
 
         every {
-            getRecipesService.getRecipes(request.id)
+            getRecipesService.getRecipes(any(), any(), any(), any())
         } returns GetRecipes.Response(
             recipeId = request.id,
             title = "테스트",
@@ -268,7 +282,8 @@ class RecipesControllerTest : RestDocsSupport() {
             tags = listOf("매콤", "찌개", "한식"),
             createdAt = Instant.now(),
             updatedAt = Instant.now(),
-            caloriesPer100g = 150L
+            caloriesPer100g = 150L,
+            viewCount = 42L
         )
 
         // when, then
@@ -282,7 +297,7 @@ class RecipesControllerTest : RestDocsSupport() {
             .andExpect(jsonPath("$.description").value("테스트 레시피"))
             .andDo(
                 document(
-                    "recipes-get",
+                    "recipes/get",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     pathParameters(
@@ -308,6 +323,7 @@ class RecipesControllerTest : RestDocsSupport() {
                         fieldWithPath("created_at").description("생성 일시"),
                         fieldWithPath("updated_at").description("수정 일시"),
                         fieldWithPath("calories_per100g").optional().description("100g당 칼로리"),
+                        fieldWithPath("view_count").description("조회수"),
                         fieldWithPath("ingredients[].name").description("재료명"),
                         fieldWithPath("ingredients[].amount").description("재료 수량"),
                         fieldWithPath("ingredients[].unit").description("재료 단위"),
@@ -383,7 +399,7 @@ class RecipesControllerTest : RestDocsSupport() {
             .andExpect(jsonPath("$.recipe_id").value(1L))
             .andDo(
                 document(
-                    "recipes-create",
+                    "recipes/create",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestFields(
@@ -479,7 +495,7 @@ class RecipesControllerTest : RestDocsSupport() {
             .andExpect(jsonPath("$.recipe_id").value(pathVariable.id))
             .andDo(
                 document(
-                    "recipes-update",
+                    "recipes/update",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     pathParameters(
@@ -537,7 +553,7 @@ class RecipesControllerTest : RestDocsSupport() {
             .andExpect(jsonPath("$.recipe_id").value(request.id))
             .andDo(
                 document(
-                    "recipes-delete",
+                    "recipes/delete",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     pathParameters(
@@ -545,6 +561,170 @@ class RecipesControllerTest : RestDocsSupport() {
                     ),
                     responseFields(
                         fieldWithPath("recipe_id").description("삭제된 레시피 ID")
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun userGetRecipes() {
+        // given
+        every {
+            userGetRecipesService.getUserRecipes(any(), any())
+        } returns UserGetRecipes.Response(
+            totalCount = 2,
+            recipes = listOf(
+                UserGetRecipes.ResponseItem(
+                    recipeId = 1L,
+                    title = "내가 만든 김치찌개",
+                    description = "집에서 쉽게 만드는 김치찌개",
+                    ingredients = listOf(
+                        Recipes.Ingredient(
+                            name = "김치",
+                            amount = 300,
+                            unit = "g",
+                            notes = "신김치"
+                        )
+                    ),
+                    seasonings = listOf(
+                        Recipes.Seasoning(
+                            name = "고추장",
+                            amount = 2,
+                            unit = "큰술"
+                        )
+                    ),
+                    instructions = listOf(
+                        Recipes.Instruction(
+                            stepNumber = 1,
+                            description = "김치를 볶고 물을 넣어 끓인다",
+                            imageUrl = "https://example.com/step1.jpg"
+                        )
+                    ),
+                    categoryType = "한식",
+                    categorySituation = "일상식",
+                    categoryIngredient = "돼지고기",
+                    categoryMethod = "찌개",
+                    prepTime = 15,
+                    cookTime = 30,
+                    servingSize = 2,
+                    difficulty = "쉬움",
+                    imageUrl = "https://example.com/kimchi.jpg",
+                    tags = listOf("매콤", "찌개", "한식"),
+                    totalLikes = 15L,
+                    totalComments = 8L,
+                    createdAt = Instant.now(),
+                    updatedAt = Instant.now()
+                ),
+                UserGetRecipes.ResponseItem(
+                    recipeId = 2L,
+                    title = "내가 만든 된장찌개",
+                    description = "구수한 된장찌개",
+                    ingredients = listOf(
+                        Recipes.Ingredient(
+                            name = "된장",
+                            amount = 2,
+                            unit = "큰술",
+                            notes = null
+                        )
+                    ),
+                    seasonings = listOf(
+                        Recipes.Seasoning(
+                            name = "마늘",
+                            amount = 1,
+                            unit = "큰술"
+                        )
+                    ),
+                    instructions = listOf(
+                        Recipes.Instruction(
+                            stepNumber = 1,
+                            description = "된장을 풀고 끓인다",
+                            imageUrl = null
+                        )
+                    ),
+                    categoryType = "한식",
+                    categorySituation = "일상식",
+                    categoryIngredient = "두부",
+                    categoryMethod = "찌개",
+                    prepTime = 10,
+                    cookTime = 20,
+                    servingSize = 3,
+                    difficulty = "쉬움",
+                    imageUrl = "https://example.com/doenjang.jpg",
+                    tags = listOf("구수", "찌개"),
+                    totalLikes = 8L,
+                    totalComments = 3L,
+                    createdAt = Instant.now(),
+                    updatedAt = Instant.now()
+                )
+            )
+        )
+
+        // when, then
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .get("/api/recipes/v1/my-recipes")
+                .param("page", "0")
+                .param("pageSize", "10")
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.total_count").value(2))
+            .andExpect(jsonPath("$.recipes").isArray)
+            .andExpect(jsonPath("$.recipes[0].recipe_id").value(1L))
+            .andExpect(jsonPath("$.recipes[0].title").value("내가 만든 김치찌개"))
+            .andExpect(jsonPath("$.recipes[0].total_likes").value(15L))
+            .andExpect(jsonPath("$.recipes[0].total_comments").value(8L))
+            .andDo(
+                document(
+                    "recipes/user-get",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    queryParameters(
+                        parameterWithName("page").description("페이지 번호").optional(),
+                        parameterWithName("pageSize").description("페이지 크기").optional()
+                    ),
+                    responseFields(
+                        fieldWithPath("total_count").description("내가 작성한 총 레시피 수"),
+                        fieldWithPath("recipes[]").description("내가 작성한 레시피 목록"),
+                        fieldWithPath("recipes[].recipe_id").description("레시피 ID"),
+                        fieldWithPath("recipes[].title").description("레시피 제목"),
+                        fieldWithPath("recipes[].description").description("레시피 설명"),
+                        fieldWithPath("recipes[].ingredients").description("재료 목록"),
+                        fieldWithPath("recipes[].ingredients[].name").description("재료명"),
+                        fieldWithPath("recipes[].ingredients[].amount").description("재료 수량"),
+                        fieldWithPath("recipes[].ingredients[].unit").description("재료 단위"),
+                        fieldWithPath("recipes[].ingredients[].notes").optional().description(
+                            "재료 비고"
+                        ),
+                        fieldWithPath("recipes[].seasonings").description("양념 목록"),
+                        fieldWithPath("recipes[].seasonings[].name").description("양념명"),
+                        fieldWithPath("recipes[].seasonings[].amount").description("양념 수량"),
+                        fieldWithPath("recipes[].seasonings[].unit").description("양념 단위"),
+                        fieldWithPath("recipes[].instructions").description("조리 방법"),
+                        fieldWithPath("recipes[].instructions[].step_number").description("단계 번호"),
+                        fieldWithPath("recipes[].instructions[].description").description("조리 설명"),
+                        fieldWithPath("recipes[].instructions[].image_url").optional().description(
+                            "단계별 이미지 URL"
+                        ),
+                        fieldWithPath("recipes[].category_type").optional().description("카테고리 타입"),
+                        fieldWithPath("recipes[].category_situation").optional().description(
+                            "상황 카테고리"
+                        ),
+                        fieldWithPath("recipes[].category_ingredient").optional().description(
+                            "재료 카테고리"
+                        ),
+                        fieldWithPath("recipes[].category_method").optional().description(
+                            "조리 방법 카테고리"
+                        ),
+                        fieldWithPath("recipes[].prep_time").optional().description("준비 시간 (분)"),
+                        fieldWithPath("recipes[].cook_time").optional().description("조리 시간 (분)"),
+                        fieldWithPath("recipes[].serving_size").optional().description("인분 수"),
+                        fieldWithPath("recipes[].difficulty").optional().description("난이도"),
+                        fieldWithPath("recipes[].image_url").optional().description("이미지 URL"),
+                        fieldWithPath("recipes[].tags[]").optional().description("태그 목록"),
+                        fieldWithPath("recipes[].total_likes").description("총 좋아요 수"),
+                        fieldWithPath("recipes[].total_comments").description("총 댓글 수"),
+                        fieldWithPath("recipes[].created_at").description("생성 일시"),
+                        fieldWithPath("recipes[].updated_at").description("수정 일시")
                     )
                 )
             )

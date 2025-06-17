@@ -14,22 +14,42 @@
 
 include::api/ping/ping.adoc[]
 
+[[Users-API]]
+== 사용자 API
+
+include::api/users/users.adoc[]
+
 [[Categories-API]]
-== Categories API
+== 카테고리 API
 
 include::api/categories/categories.adoc[]
 
 [[Recipes-API]]
-== Recipes API
+== 레시피 API
 
 include::api/recipes/recipes.adoc[]
 
 [[Foods-API]]
-== Foods API
+== 푸드 API
 
 include::api/foods/foods.adoc[]
 
 [[MealRecords-API]]
-== Meal Records API
+== 식단 API
 
 include::api/mealrecords/mealrecords.adoc[]
+
+[[RecipeLikes-API]]
+== 레시피 좋아요 API
+
+include::api/recipelikes/recipelikes.adoc[]
+
+[[RecipeComments-API]]
+== 레시피 댓글 API
+
+include::api/recipecomments/recipecomments.adoc[]
+
+[[ShoppingCart-API]]
+== 장바구니 API
+
+include::api/shoppingcart/shoppingcart.adoc[]

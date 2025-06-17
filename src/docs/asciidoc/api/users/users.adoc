@@ -1,0 +1,37 @@
+[[users]]
+=== 이메일 전송
+
+==== HTTP Request
+include::{snippets}/users/send-verification/http-request.adoc[]
+include::{snippets}/users/send-verification/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/users/send-verification/http-response.adoc[]
+include::{snippets}/users/send-verification/response-fields.adoc[]
+
+=== 이메일 인증
+
+==== HTTP Request
+include::{snippets}/users/verify-email/http-request.adoc[]
+include::{snippets}/users/verify-email/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/users/verify-email/http-response.adoc[]
+include::{snippets}/users/verify-email/response-fields.adoc[]
+
+=== 회원가입
+include::{snippets}/users/register/http-request.adoc[]
+include::{snippets}/users/register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/users/register/http-response.adoc[]
+include::{snippets}/users/register/response-fields.adoc[]
+
+=== 유저 조회
+
+==== HTTP Request
+include::{snippets}/users/me/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/users/me/http-response.adoc[]
+include::{snippets}/users/me/response-fields.adoc[]

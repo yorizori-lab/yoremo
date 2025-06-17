@@ -44,6 +44,42 @@ class RecipesAdapter(
         return PageImpl(content, pageable, total)
     }
 
+    fun findByUserIdOrderByCreatedAtDesc(userId: Long, pageable: Pageable): Page<Recipes> {
+        val content = queryFactory
+            .selectFrom(recipes)
+            .leftJoin(recipes.categoryType, QCategories(Recipes::categoryType.name)).fetchJoin()
+            .leftJoin(
+                recipes.categorySituation,
+                QCategories(Recipes::categorySituation.name)
+            ).fetchJoin()
+            .leftJoin(
+                recipes.categoryIngredient,
+                QCategories(Recipes::categoryIngredient.name)
+            ).fetchJoin()
+            .leftJoin(recipes.categoryMethod, QCategories(Recipes::categoryMethod.name)).fetchJoin()
+            .where(recipes.userId.eq(userId))
+            .orderBy(recipes.createdAt.desc())
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        val total = queryFactory
+            .select(recipes.count())
+            .from(recipes)
+            .where(recipes.userId.eq(userId))
+            .fetchOne() ?: 0L
+
+        return PageImpl(content, pageable, total)
+    }
+
+    fun incrementViewCountBy(recipeId: Long, count: Long): Long {
+        return queryFactory
+            .update(recipes)
+            .set(recipes.viewCount, recipes.viewCount.add(count))
+            .where(recipes.recipeId.eq(recipeId))
+            .execute()
+    }
+
     private fun buildConditions(command: RecipesSearchCommand): Collection<BooleanExpression?> {
         return listOf(
             command.categoryTypeId?.let { recipes.categoryType.categoryId.eq(it) },
