@@ -24,4 +24,8 @@ class UsersRepository(
     fun save(users: Users): Users {
         return usersJpaRepository.save(users)
     }
+
+    fun findAllById(ids: List<Long>): List<Users> {
+        return usersJpaRepository.findAllById(ids)
+    }
 }
