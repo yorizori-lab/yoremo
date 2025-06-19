@@ -35,7 +35,11 @@ class FoodVectorSyncTasklet(
 
         needSyncFoods.forEach { food ->
             try {
-                vectorStore.delete(listOf("foodId == '${food.foodId!!}'"))
+                try {
+                    vectorStore.delete("food_id == '${food.foodId!!}'")
+                } catch (e: Exception) {
+                    logger.warn("Failed to delete existing vector for food ID: ${food.foodId}", e)
+                }
 
                 val document = createDocument(food, food.recipe)
                 val tokenizedDocs = tokenTextSplitter.apply(listOf(document))
@@ -53,124 +57,95 @@ class FoodVectorSyncTasklet(
             }
         }
 
+        logger.info("Food vector sync completed - Success: $successCount, Failed: $failCount")
         return RepeatStatus.FINISHED
     }
 
     private fun createDocument(food: Foods, recipe: Recipes?): Document {
         val sb = StringBuilder()
 
-        sb.appendLine("식재료 ID: ${food.foodId}")
-        sb.appendLine("이름: ${food.name}")
-        sb.appendLine("타입: ${food.foodType.description}")
-        sb.appendLine("칼로리(100g당): ${food.caloriesPer100g}kcal")
+        sb.append(food.name)
 
         recipe?.let { r ->
-            sb.appendLine("\n=== 관련 레시피 정보 ===")
-            sb.appendLine("레시피 ID: ${r.recipeId}")
-            sb.appendLine("제목: ${r.title}")
+            sb.append("로 만들 수 있는 ${r.title}")
 
-            if (!r.description.isNullOrBlank()) {
-                sb.appendLine("설명: ${r.description}")
-            }
-
-            sb.appendLine("재료:")
             try {
-                r.ingredients.forEach {
-                    sb.append("  - ${it.name}")
-                    if (it.amount != null && !it.unit.isNullOrBlank()) {
-                        sb.append(" ${it.amount}${it.unit}")
-                    } else if (it.amount != null) {
-                        sb.append(" ${it.amount}")
-                    } else if (!it.unit.isNullOrBlank()) {
-                        sb.append(" ${it.unit}")
-                    }
+                val allIngredients = mutableListOf<String>()
 
-                    if (!it.notes.isNullOrBlank()) {
-                        sb.append(" (${it.notes})")
-                    }
-                    sb.appendLine()
+                val ingredientNames = r.ingredients.map { it.name }
+                allIngredients.addAll(ingredientNames)
+
+                val seasoningNames = r.seasonings.map { it.name }
+                allIngredients.addAll(seasoningNames)
+
+                if (allIngredients.isNotEmpty()) {
+                    sb.append(". 필요한 재료: ${allIngredients.joinToString(", ")}")
                 }
-            } catch (_: Exception) {
-                sb.appendLine("  ${r.ingredients}")
+            } catch (e: Exception) {
+                logger.warn("Failed to parse ingredients for food ${food.foodId}", e)
             }
 
-            sb.appendLine("양념:")
-            try {
-                r.seasonings.forEach {
-                    sb.append("  - ${it.name}")
-                    if (it.amount != null && !it.unit.isNullOrBlank()) {
-                        sb.append(" ${it.amount}${it.unit}")
-                    } else if (it.amount != null) {
-                        sb.append(" ${it.amount}")
-                    } else if (!it.unit.isNullOrBlank()) {
-                        sb.append(" ${it.unit}")
-                    }
-                    sb.appendLine()
-                }
-            } catch (_: Exception) {
-                sb.appendLine("  ${r.seasonings}")
+            val characteristics = mutableListOf<String>()
+
+            r.categoryType?.let { characteristics.add(it.name) }
+            r.categoryMethod?.let { characteristics.add(it.name) }
+
+            val totalTime = (r.prepTime ?: 0) + (r.cookTime ?: 0)
+            if (totalTime > 0) {
+                characteristics.add("${totalTime}분")
             }
 
-            sb.appendLine("조리방법:")
-            try {
-                r.instructions
-                    .sortedBy { it.stepNumber }
-                    .forEach { instruction ->
-                        sb.appendLine("  ${instruction.stepNumber}. ${instruction.description}")
-                    }
-            } catch (_: Exception) {
-                sb.appendLine("  ${r.instructions}")
-            }
+            r.difficulty?.let { characteristics.add(it.name) }
 
-            r.prepTime?.let { sb.appendLine("준비시간: ${it}분") }
-            r.cookTime?.let { sb.appendLine("조리시간: ${it}분") }
-            r.servingSize?.let { sb.appendLine("양: ${it}인분") }
-            r.difficulty?.let { sb.appendLine("난이도: $it") }
+            if (characteristics.isNotEmpty()) {
+                sb.append(". ${characteristics.joinToString(", ")}")
+            }
 
             r.tags?.let { tagsList ->
                 if (tagsList.isNotEmpty()) {
-                    sb.append("태그: ")
-                    sb.appendLine(tagsList.joinToString(", "))
+                    sb.append(". ${tagsList.joinToString(", ")}")
                 }
             }
-
-            r.categoryType?.let { category ->
-                sb.appendLine("종류: ${category.name}")
-            }
-
-            r.categorySituation?.let { category ->
-                sb.appendLine("상황: ${category.name}")
-            }
-
-            r.categoryIngredient?.let { category ->
-                sb.appendLine("주재료: ${category.name}")
-            }
-
-            r.categoryMethod?.let { category ->
-                sb.appendLine("조리방법: ${category.name}")
-            }
+        } ?: run {
+            sb.append("는 다양한 요리에 활용할 수 있는 식재료입니다")
         }
 
         val metadata = mutableMapOf<String, Any>()
+
         metadata["food_id"] = food.foodId.toString()
+        metadata["recipe_id"] = recipe?.recipeId?.toString() ?: "null"
+
         metadata["food_name"] = food.name
-        metadata["food_type"] = food.foodType.name
-        metadata["calories_per100g"] = food.caloriesPer100g.toString()
-        metadata["document_type"] = "food"
-        metadata["synced_at"] = Instant.now().toString()
 
         recipe?.let { r ->
-            r.recipeId?.let { metadata["recipe_id"] = it.toString() }
             metadata["recipe_title"] = r.title
 
-            r.categoryType?.let { metadata["category_type"] = it.categoryId.toString() }
-            r.categorySituation?.let { metadata["category_situation"] = it.categoryId.toString() }
-            r.categoryIngredient?.let { metadata["category_ingredient"] = it.categoryId.toString() }
-            r.categoryMethod?.let { metadata["category_method"] = it.categoryId.toString() }
+            r.categoryType?.let { metadata["category_type_name"] = it.name }
+            r.categoryMethod?.let { metadata["category_method_name"] = it.name }
+            r.categorySituation?.let { metadata["category_situation_name"] = it.name }
+            r.categoryIngredient?.let { metadata["category_ingredient_name"] = it.name }
+
+            r.prepTime?.let { metadata["prep_time"] = it.toString() }
+            r.cookTime?.let { metadata["cook_time"] = it.toString() }
+            r.difficulty?.let { metadata["difficulty"] = it.name }
+
+            try {
+                val ingredientNames = r.ingredients.map { it.name }
+                if (ingredientNames.isNotEmpty()) {
+                    metadata["ingredients"] = ingredientNames.toTypedArray()
+                }
+
+                val seasoningNames = r.seasonings.map { it.name }
+                if (seasoningNames.isNotEmpty()) {
+                    metadata["seasonings"] = seasoningNames.toTypedArray()
+                }
+            } catch (e: Exception) {
+                logger.warn("Failed to extract ingredient metadata for food ${food.foodId}", e)
+            }
 
             r.tags?.let { tagsList ->
                 if (tagsList.isNotEmpty()) {
-                    metadata["tags"] = tagsList.joinToString(",")
+                    metadata["tags"] = tagsList.toTypedArray()
                 }
             }
         }

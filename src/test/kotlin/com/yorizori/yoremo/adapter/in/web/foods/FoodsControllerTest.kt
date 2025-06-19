@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import com.yorizori.yoremo.adapter.`in`.web.foods.message.Calorie
 import com.yorizori.yoremo.domain.foods.service.CalorieCalculatorService
+import com.yorizori.yoremo.domain.foods.service.RecommendIngredientsService
 import com.yorizori.yoremo.test.RestDocsSupport
 import com.yorizori.yoremo.test.YoremoControllerTest
 import io.mockk.every
@@ -28,12 +29,16 @@ class FoodsControllerTest : RestDocsSupport() {
     @MockkBean
     private lateinit var calorieCalculatorService: CalorieCalculatorService
 
+    @MockkBean
+    private lateinit var recommendIngredientsService: RecommendIngredientsService
+
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
     override fun initController(): Any {
         return FoodsController(
-            calorieCalculatorService
+            calorieCalculatorService,
+            recommendIngredientsService
         )
     }
 
